@@ -16,7 +16,7 @@ This repository contains all the work I have done during my internship at Innoma
 
 ## Projects
 
-1. **Project 1**: Description of Project 1
+1. **Project 1**: Personal Budget Tracker using HTML (internal css for better styling and internal scripts for making functional)
 
 ## Homework
 
