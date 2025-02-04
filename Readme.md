@@ -6,7 +6,7 @@ Welcome to my repository! Here, I will be uploading all of my internship homewor
 
 - [Introduction](#introduction)
 - [Projects](#projects)
-- [Homework](#homework)
+- [Assignments](#assignments)
 - [Technologies Used](#technologies-used)
 - [Contact](#contact)
 
@@ -16,11 +16,12 @@ This repository contains all the work I have done during my internship at Innoma
 
 ## Projects
 
-1. **Project 1**: Personal Budget Tracker using HTML (internal css for better styling and internal scripts for making functional)
+1. **Project 1**: Clone of Innomatics Research Labs Website (Comming Soon)
 
-## Homework
+## Assignments
 
-1. **Homework 1**: Description about HTML Favicons, Emojis, Structural Tags, Semantic Tags, Description List
+1. **Assignment 1**: Personal Budget Tracker using HTML (internal css for better styling and internal scripts for making functional)
+2. **Assignment 2**: Brewed Awakening Coffee Shop Website Just for FrontView (Using HTML and CSS)
 
 ## Technologies Used
 
