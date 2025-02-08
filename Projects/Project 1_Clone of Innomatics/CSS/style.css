@@ -877,3 +877,171 @@ h2 {
     padding: 10px;
 }
 
+/* Responsive Design */
+
+/* Small Devices (Mobiles) */
+@media only screen and (max-width: 768px) {
+    .top-bar .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .top-bar .container .en-closed {
+        margin: 10px 0;
+    }
+
+    .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .logo img {
+        height: 50px;
+        margin-left: 0;
+    }
+
+    .navbar ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pay-now {
+        margin-right: 0;
+        margin-top: 10px;
+    }
+
+    .content {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .left-section, .right-section {
+        width: 100%;
+        margin: 0;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .video-container iframe {
+        width: 100%;
+        height: auto;
+    }
+
+    .tabs {
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px;
+    }
+
+    .course-card {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .training-section {
+        padding: 15px;
+    }
+
+    .hero h1 {
+        font-size: 28px;
+    }
+}
+
+/* Medium Devices (Tablets) */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 10px;
+    }
+
+    .logo img {
+        height: 50px;
+    }
+
+    .navbar ul {
+        gap: 15px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .content {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .left-section, .right-section {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .video-container iframe {
+        width: 100%;
+        height: auto;
+    }
+
+    .tabs {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .course-card {
+        width: 80%;
+        margin: 0 auto;
+    }
+}
+
+/* Large Devices (Desktops and Larger Screens) */
+@media only screen and (min-width: 1025px) {
+    .container {
+        padding: 20px 50px;
+    }
+
+    .logo img {
+        height: 60px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+
+    .content {
+        padding: 20px 50px;
+    }
+
+    .tabs {
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .course-card {
+        width: 350px;
+    }
+}
+
+/* Additional Styles for Responsiveness */
+.hero .bannershow {
+    max-width: 100%;
+    border-radius: 5px;
+}
+
+.hero h1 {
+    font-size: clamp(24px, 5vw, 36px);
+}
+
+.cards {
+    gap: 15px;
+}
+
+.video-section {
+    margin-right: 0;
+}
+
+.tabs-container {
+    flex-wrap: wrap;
+}
