@@ -109,21 +109,83 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     window.checkout = function () {
+        let modal = document.getElementById("checkoutModal");
+        let modalContent = document.querySelector(".modal-content");
+        let orderDetails = document.getElementById("orderDetails");
+        let orderTotal = document.getElementById("orderTotal");
+        let confirmButton = document.getElementById("confirmOrder");
+        let closeButton = document.getElementById("closeModal");
+    
+        // Ensure modalContent has initial structure to avoid overriding elements
+        modalContent.innerHTML = `
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h2>Order Summary</h2>
+            <div id="orderDetails"></div>
+            <p><strong>Total: RS. <span id="orderTotal"></span></strong></p>
+            <button id="confirmOrder">Confirm Order</button>
+        `;
+    
+        // Reassign new elements after updating modalContent
+        orderDetails = document.getElementById("orderDetails");
+        orderTotal = document.getElementById("orderTotal");
+        confirmButton = document.getElementById("confirmOrder");
+        closeButton = document.getElementById("closeModal");
+    
+        // Clear previous content
+        orderDetails.innerHTML = "";
+        orderTotal.textContent = "";
+    
+        // Show modal
+        modal.style.display = "flex";
+    
         if (cart.length === 0) {
-            alert("Your cart is empty. Add some products before checkout.");
+            // Empty Cart Handling
+            modalContent.innerHTML = `
+                <h2>Your Cart is Empty</h2>
+                <p>Add some products before proceeding to checkout.</p>
+                <button id="closeModal">Close</button>
+            `;
+    
+            // Close Modal Event
+            document.getElementById("closeModal").addEventListener("click", function () {
+                modal.style.display = "none";
+            });
+    
             return;
         }
-        
-        let orderSummary = "Your Order Summary:\n";
+    
+        // If cart has items, show order summary
         cart.forEach(item => {
-            orderSummary += `${item.name} x ${item.quantity} = RS. ${item.price * item.quantity}\n`;
+            let itemDetail = document.createElement("p");
+            itemDetail.textContent = `${item.name} x ${item.quantity} = RS. ${item.price * item.quantity}`;
+            orderDetails.appendChild(itemDetail);
         });
-        orderSummary += `\nTotal: RS. ${cartTotal.textContent}`;
-        
-        alert(orderSummary + "\n\nThank you for shopping with us!");
-        
-        clearCart();
+    
+        // Set Total
+        orderTotal.textContent = `${cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}`;
+    
+        // Confirm Order
+        confirmButton.onclick = function () {
+            modalContent.innerHTML = `
+                <h2>Order Confirmed!</h2>
+                <p>Thank you for shopping with us. Your order has been placed successfully.</p>
+                <button id="closeModal">Close</button>
+            `;
+    
+            clearCart(); // Function to clear cart items
+    
+            // Close modal after confirmation
+            document.getElementById("closeModal").addEventListener("click", function () {
+                modal.style.display = "none";
+            });
+        };
+    
+        // Close Modal Button Functionality
+        closeButton.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
     };
+    
 
     window.filterCategory = function (category) {
         renderProducts(category);
