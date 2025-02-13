@@ -197,10 +197,20 @@ nav ul li a:hover {
 
 @media (max-width: 768px) {
 
-    nav{
+    nav {
         flex-direction: column;
         align-items: center;
+        text-align: center;
+    }
+
+    nav ul {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    nav ul li {
         width: 100%;
+        padding: 10px 0;
     }
 
     .cart-panel {
