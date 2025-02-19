@@ -119,7 +119,7 @@ header h1 {
 
 @media (max-width: 600px) {
     .game-board {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 

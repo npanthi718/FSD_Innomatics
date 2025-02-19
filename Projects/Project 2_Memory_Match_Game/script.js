@@ -146,6 +146,7 @@ function gameOver(message) {
     gameEnded = true;
     document.getElementById('end-message').style.display = 'block';
     document.getElementById('end-message').querySelector('h2').textContent = message;
+    document.getElementById('score').textContent = `You have scored ${score}`;
     soundEnd.play();
 
     saveGameState();
