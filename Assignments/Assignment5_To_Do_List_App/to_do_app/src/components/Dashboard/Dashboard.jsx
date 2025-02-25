@@ -20,7 +20,7 @@ function Dashboard({ isLoggedIn, currentUser, onLogout, LoginComponent, SignupCo
             setCurrentDate(new Date());
         }, 1000);
         return () => clearInterval(intervalId);
-    }, []);
+    }, [motivationalLines]);
 
     useEffect(() => {
         setMotivationalLine(motivationalLines[Math.floor(Math.random() * motivationalLines.length)]);
