@@ -24,7 +24,7 @@ function Dashboard({ isLoggedIn, currentUser, onLogout, LoginComponent, SignupCo
 
     useEffect(() => {
         setMotivationalLine(motivationalLines[Math.floor(Math.random() * motivationalLines.length)]);
-    }, []);
+    }, [motivationalLines]);
 
     return (
         <div className="dashboard-container">

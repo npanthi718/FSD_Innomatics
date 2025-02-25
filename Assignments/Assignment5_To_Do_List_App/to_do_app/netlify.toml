@@ -1,0 +1,6 @@
+[build]
+  command = "npm run build"
+  publish = "Assignments/Assignment5_To_Do_List_App/to_do_app/build"
+
+[build.environment]
+  NODE_VERSION = "16"
