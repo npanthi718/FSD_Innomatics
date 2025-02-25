@@ -18,6 +18,8 @@ This repository contains all the work I have done during my internship at Innoma
 
 1. **Project 1**: Clone of Innomatics Research Labs Website (Used only Html & CSS)
 2. **Project 2**: Memory Matching Game (Used HTML, CSS and JavaScript)
+3. **Project 3**: Comming Soon
+
 
 ## Assignments   (You can visit every Assignments Code Inside the Assignments Folder)
 
@@ -36,7 +38,8 @@ This repository contains all the work I have done during my internship at Innoma
     - Java 10 Flight Ticket Booking System
 
 4. **Assignment 4**: Shopping Cart Website (Using Html, CSS & JavaScript)
-5. **Assignment 5**: Comming Soon
+5. **Assignment 5**: Advanced To-Do-App (Using React)
+6. **Assignment 6**: Comming Soon
 ## Technologies Used
 
 - HTML
@@ -50,5 +53,7 @@ This repository contains all the work I have done during my internship at Innoma
 ## Contact
 
 For any questions or inquiries, please contact me at npanthi718@gmail.com.
+Contact : +91 7602018437
+Whatsapp: +977 9823009467
 
 Thank you for visiting my repository!
