@@ -6,7 +6,7 @@ import './Dashboard.css';
 
 function Dashboard({ isLoggedIn, currentUser, onLogout, LoginComponent, SignupComponent, showLogin, toggleAuthView }) {
     const [currentDate, setCurrentDate] = useState(new Date());
-    const motivationalLines =useMemo(() => [
+    const motivationalLines = useMemo(() =>[
         "The key is not to prioritize what's on your schedule, but to schedule your priorities.",
         "Start by doing what's necessary; then do what's possible; and suddenly you are doing the impossible.",
         "Don't watch the clock; do what it does. Keep going.",
