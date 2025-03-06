@@ -1,0 +1,40 @@
+/* src/components/EducationCard/EducationCard.module.css */
+.educationCard {
+    background-color: var(--card-background);
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Take full width in Education section */
+    max-width: 1100px; /* Limit width if needed */
+    text-align: left; /* Align text to left */
+    color: var(--text-color); /* Added: Ensure text color is themed */
+}
+
+.degree {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
+.institution {
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+}
+
+.date {
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 15px;
+}
+
+.cgpa {
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 500;
+}

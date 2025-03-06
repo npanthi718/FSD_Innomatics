@@ -1,0 +1,35 @@
+/* src/components/CourseCard/CourseCard.module.css */
+.courseCard {
+    background-color: var(--card-background);
+    padding: 20px; /* Slightly less padding than CertificateCard */
+    border-radius: 7px; /* Slightly less rounded than CertificateCard */
+    margin-bottom: 15px; /* Slightly less margin than CertificateCard */
+    box-shadow: var(--card-shadow-light); /* Lighter shadow for Courses */
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Take full width in Courses section */
+    max-width: 450px; /* Slightly smaller max width */
+    text-align: left;
+    color: var(--text-color); /* Added: Ensure text color is themed */
+}
+
+.courseName {
+    font-size: 1.2rem;
+    font-weight: 500; /* Slightly less bold than CertificateName */
+    color: var(--text-color);
+    margin-bottom: 8px;
+}
+
+.institution {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    margin-bottom: 6px;
+    font-style: italic;
+    opacity: 0.9; /* Slightly more opaque institution text */
+}
+
+.date {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.6; /* Slightly lighter date text */
+}
