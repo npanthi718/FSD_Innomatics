@@ -28,7 +28,7 @@ This is my personal portfolio website, built with React, to showcase my web deve
     *   [Framer Motion] - Library for animations and transitions to enhance user experience.
 
 *   **Deployment:**
-    *   [Netlify/Vercel/GitHub Pages/etc.] -  *(Choose the platform you used for deployment)* Platform used to deploy and host the website.
+    * Vercel - Platform used to deploy and host the website.
 
 *   **Tools:**
     *   [VS Code] - Code Editor
@@ -38,7 +38,7 @@ This is my personal portfolio website, built with React, to showcase my web deve
 
 ## Live Demo
 
-[**[https://web-portfolio-sushil.vercel.app/]**](https://web-portfolio-sushil.vercel.app/)
+[**[Live Demo For My WEB PROFILE]**](https://web-portfolio-sushil.vercel.app/)
 
 ## Installation
 
