@@ -1,5 +1,5 @@
 /* src/styles/global.css */
-/*General Styles (No Theme)*/
+/* General Styles (Dark Theme Default) */
 
 html {
   scroll-behavior: smooth;
@@ -10,194 +10,38 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: background-color 0.5s ease, color 0.5s ease; /* Smooth theme transitions */
+  background-color: var(--primary-color); /* Default to dark primary background */
+  color: var(--text-color);             /* Default text color for dark theme */
+  transition: background-color 0.5s ease, color 0.5s ease; /* Smooth theme transitions - although now only dark theme */
 }
 
 /* ... (rest of your general styles like typography, etc. - if any) ... */
 
 
-/*LIGHT THEME OVERRIDES */
-/*Applied when body has class 'light-theme' */
-body.light-theme {
-  /* --- Override Core Background Colors for Light Theme --- */
-  background-color: #f0f0f0;         /* Light primary background (off-white) */
-  color: #121212;                   /* Default text color in light theme (darker gray) */
-}
-
-/* --- Section Backgrounds in Light Theme --- */
-.light-theme .sectionBase {
-  background-color: #ffffff;         /* Light secondary background (white) */
-}
-
-.light-theme .home {
-  background-color: #f0f0f0;         /* Light primary background for Home section */
-}
-
-/* --- Navbar in Light Theme --- */
-.light-theme .navbar {
-  background-color: #ffffff;         /* Light secondary background for Navbar (white) */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);     /* Adjust shadow for light navbar */
-}
-
-/* --- Card, List Item, Form Backgrounds in Light Theme --- */
-.light-theme .card,         /* If you have a general 'card' class */
-.light-theme .experienceItem,
-.light-theme .aboutContactDetails,
-.light-theme .contactForm,
-.light-theme .courseCard,
-.light-theme .educationCard,
-.light-theme .certificateCard,
-.light-theme .achievementCard,
-.light-theme .skillCard,       /* Added SkillCard to light theme overrides */
-.light-theme .popupContent     /* Added PopupContent to light theme overrides */
-{
-  background-color: #ffffff;         /* Light card background (white) */
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);     /* Adjust card shadow for light theme */
-  border-color: var(--light-border-color);     /* Light card border color (light gray) */
-}
-.light-theme .contactList {      /* Added for Contact List background if needed */
-  background-color: transparent;     /* Or set to --light-secondary-color if you want a background */
-}
-.light-theme .techItem {        /* Added for Tech Item in Project Cards */
-  background-color: #ffffff;     /* White background for tech items in light theme */
-  box-shadow: var(--card-shadow-light); /* Apply light card shadow */
-  border: 1px solid var(--light-border-color); /* Light border */
-  color: #121212;             /* Ensure text is dark in light theme tech items */
-}
-
-/* --- Text Elements in Light Theme --- */
-.light-theme .logo,           /* Logo text */
-.light-theme .navLink,         /* Navbar links */
-.light-theme .text h1.name,       /* Home section name */
-.light-theme .tagline,         /* Home section tagline */
-.light-theme .overview,        /* Home section overview text */
-.light-theme .sectionTitle,      /* Section titles (About, Skills, etc.) */
-.light-theme .skillCategoryTitle,    /* Skill category titles */
-.light-theme .jobTitle,          /* Experience job titles */
-.light-theme .companyName,       /* Experience company names */
-.light-theme .dateLocation,      /* Experience dates/locations */
-.light-theme .descriptionItem,    /* Experience description list items */
-.light-theme .cardTitle,         /* Card titles (Education, Course, etc.) */
-.light-theme .institution,       /* Education institution */
-.light-theme .courseProvider,      /* Course provider */
-.light-theme .dateRange,         /* Education/Course date range */
-.light-theme .duration,          /* Course duration */
-.light-theme .description,       /* Card descriptions */
-.light-theme .content,           /* About section content */
-.light-theme .content p,         /* Paragraphs in About content */
-.light-theme .contactText,       /* Contact section text */
-.light-theme .contactList,       /* Contact list */
-.light-theme .contactListItem,     /* Contact list items */
-.light-theme .contactListItem strong, /* Bold labels in contact list */
-.light-theme .formLabel,         /* Form labels */
-.light-theme .burgerButton,        /* Burger button icon color */
-.light-theme .footer,            /* Footer text and copyright */
-.light-theme .footer .socialLink,   /* Footer social links */
-.light-theme .buttonText,        /* Button text (Resume button) */
-.light-theme .achievementsList li,  /* Added for Achievements List items*/
-.light-theme .certificatesList li, /* Added for Certificates List items*/
-.light-theme .coursesList li,      /* Added for Courses List items*/
-.light-theme .educationList li,    /* Added for Education List items*/
-.light-theme .popupContent .message  /* Added for Popup message text */
-{
-  color: #121212;             /* Apply darker text color in light theme */
-}
-/* --- Input and Textarea Text Color in Light Theme --- */
-.light-theme .formInput,
-.light-theme .formTextarea {
-  color: #121212;             /* Input and textarea text color in light theme */
-}
-/* --- Placeholder text color for inputs/textareas in light theme --- */
-.light-theme .formInput::placeholder,
-.light-theme .formTextarea::placeholder {
-  color: #777;             /* Or any lighter shade of dark text */
-  opacity: 0.8;
-}
-
-
-/* --- Link & Button Accent Colors in Light Theme --- */
-.light-theme .navLink:hover,
-.light-theme .socialLink:hover {
-  color: #007bff;             /* Accent color on nav link hover in light theme (blue) */
-}
-
-.light-theme .themeToggleButton:hover {
-  background-color: #f0f0f0;     /* Hover background for theme toggle in light theme (optional) */
-  color: #007bff;             /* Accent hover color for theme toggle in light theme (blue) */
-}
-.light-theme .linkButton:hover {   /* Hover for project card link buttons */
-  background-color: #007bff;     /* Blue accent color for link button hover */
-  color: #fff;               /* White text for link button hover */
-  box-shadow: var(--card-shadow-lg-light); /* Lighter shadow for button hover */
-}
-
-
-/* --- Buttons (Resume, Submit) in Light Theme --- */
-.light-theme .resumeButton,
-.light-theme .submitButton,
-.light-theme .linkButton     /* Apply light theme style to ProjectCard link buttons as well */
-{
-  background-color: #007bff;     /* Light theme button background (indigo accent - blue) */
-  color: #ffffff;             /* Button text color (white) - ensure contrast */
-  box-shadow: var(--card-shadow-light);     /* Adjust button shadow for light theme */
-}
-
-.light-theme .resumeButton:hover,
-.light-theme .submitButton:hover {
-  background-color: #0056b3;     /* Light theme button hover background (darker indigo) */
-  box-shadow: var(--card-shadow-lg-light);   /* Adjust button hover shadow for light theme */
-}
-/* --- Accent color for theme toggle in light theme --- */
-.light-theme .themeToggleButton {
-  color: #007bff;             /* Light theme toggle accent color (blue) */
-}
-.light-theme .skillIcon {       /* Skill icons in light theme - ensure accent color */
-  color: #007bff;         /* Or a different accent color if you prefer for light theme skill icons */
-}
-
-
-/* --- Form Input and Textarea Styles in Light Theme --- */
-.light-theme .formInput,
-.light-theme .formTextarea {
-  background-color: #ffffff;         /* Light input background (white) */
-  border-color: var(--light-border-color);     /* Light input border color (light gray) */
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03); /* Subtle inset shadow for inputs in light theme */
-}
-
-.light-theme .formInput:focus,
-.light-theme .formTextarea:focus {
-  border-color: #007bff;         /* Focused input border color (indigo accent - blue) */
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2), 0 0 5px rgba(0, 123, 255, 0.3); /* Focus shadow for inputs in light theme */
-}
-
-
-/* DARK THEME (DEFAULT)  */
+/* DARK THEME (DEFAULT) -  RETAINED AND SIMPLIFIED */
 :root {
   /* --- Core Background Colors --- */
-  --primary-color: #121212;         /* Main background color (dark gray) */
-  --secondary-color: #1e1e1e;         /* Section backgrounds, Navbar background (slightly lighter dark gray) */
-  --card-background: #282828;          /* Background for cards, experience items, contact form (even lighter dark gray) */
+  --primary-color: #121212;          /* Main background color (dark gray) */
+  --secondary-color: #1e1e1e;        /* Section backgrounds, Navbar background (slightly lighter dark gray) */
+  --card-background: #282828;         /* Background for cards, experience items, contact form (even lighter dark gray) */
   --card-background-light: #333;      /* A slightly lighter shade for card backgrounds if needed */
 
   /* --- Text Colors --- */
-  --text-color: #f0f0f0;           /* Primary text color (light gray/off-white) */
-  --text-color-light: #ccc;         /* Slightly lighter text color for less emphasized text */
+  --text-color: #f0f0f0;             /* Primary text color (light gray/off-white) */
+  --text-color-light: #ccc;          /* Slightly lighter text color for less emphasized text */
 
   /* --- Accent Colors --- */
-  --accent-color: #00bcd4;         /* Main accent color (teal/cyan) */
-  --accent-hover-color: #00acc1;     /* Hover state accent color (slightly darker teal) */
+  --accent-color: #00bcd4;          /* Main accent color (teal/cyan) */
+  --accent-hover-color: #00acc1;      /* Hover state accent color (slightly darker teal) */
   --accent-color-transparent: rgba(0, 188, 212, 0.2); /* Transparent version of accent color */
-  --accent-color-rgb: 0, 188, 212;     /* RGB values of accent color for rgba() */
-  --accent-color-light: #26c6da;     /* ADDED: Lighter accent color for light theme buttons */
-  --accent-hover-color-light: #4dd0e1; /* ADDED: Lighter accent hover color for light theme buttons */
+  --accent-color-rgb: 0, 188, 212;      /* RGB values of accent color for rgba() */
 
   /* --- Border Colors --- */
-  --border-color: #444;           /* Border color (darker gray) */
-  --light-border-color: #ddd;         /* Lighter border color for light theme */
+  --border-color: #444;              /* Border color (darker gray) */
 
   /* --- Shadow Colors --- */
-  --card-shadow: 0 5px 12px rgba(0, 0, 0, 0.09);   /* Subtle card shadow */
-  --card-shadow-light: 0 3px 7px rgba(0, 0, 0, 0.05);   /* Lighter card shadow for light theme */
-  --card-shadow-lg: 0 7px 18px rgba(0, 0, 0, 0.14);    /* Larger card shadow on hover */
-  --card-shadow-lg-light: 0 4px 10px rgba(0, 0, 0, 0.12); /* Lighter larger card shadow for light theme */
+  --card-shadow: 0 5px 12px rgba(0, 0, 0, 0.09);     /* Subtle card shadow */
+  --card-shadow-light: 0 3px 7px rgba(0, 0, 0, 0.05);   /* Lighter card shadow (no longer needed for light theme, but kept for consistency if used elsewhere) */
+  --card-shadow-lg: 0 7px 18px rgba(0, 0, 0, 0.14);      /* Larger card shadow on hover */
+  --card-shadow-lg-light: 0 4px 10px rgba(0, 0, 0, 0.12); /* Lighter larger card shadow (no longer needed for light theme, but kept if used) */
 }
