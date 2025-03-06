@@ -3,522 +3,492 @@
 /* Global Styles and Smooth Scrolling (No Changes) */
 html { scroll-behavior: smooth; }
 
-
 .homeContainer { overflow: hidden; }
 
-
+/* ----------------------------------------------------- */
 /* Home Section - Refinements for Alignment and Spacing */
+/* ----------------------------------------------------- */
 .home {
-    padding: 150px 30px 150px 30px;
+    padding: 120px 20px;
     display: flex;
-    justify-content: center; /* Center content horizontally in Home section */
+    justify-content: center;
     align-items: center;
-    text-align: center; /* Center text within the intro on mobile, overridden on desktop */
-    background-color: var(--primary-color); /* Use theme variable */
-    color: var(--text-color);          /* Use theme variable */
+    text-align: center;
+    background-color: var(--primary-color);
+    color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .intro {
     display: flex;
-    flex-direction: column; /* Stack profile image and text on mobile */
-    align-items: center;     /* Center items in intro on mobile */
-    max-width: 1200px; /* Increased max-width for intro container */
-    padding: 0 20px;      /* Add some horizontal padding within intro */
+    flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+    padding: 0 10px;
 }
 
 .profileImage {
-    width: 200px; /* Slightly smaller profile image on mobile */
-    height: 200px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 25px; /* Reduced bottom margin on mobile */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Slightly less intense shadow on mobile */
-    border: 3px solid var(--secondary-color); /* Use theme variable */
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    border: 3px solid var(--secondary-color);
     transition: transform 0.3s ease-in-out;
 }
 
 .profileImage:hover { transform: scale(1.04); }
 
-.text {
-    margin-top: 0; /* Reset top margin for text on mobile */
-    text-align: justify;
-}
+.text { margin-top: 0; text-align: justify; }
 
 .text h1.name {
-    font-size: 2.6rem; /* Slightly smaller name on mobile */
+    font-size: 1.6rem;
     font-weight: 780;
-    color: var(--accent-color);     /* Use theme variable */
-    margin-bottom: 10px; /* Reduced bottom margin for name */
+    color: var(--accent-color);
+    margin-bottom: 6px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    letter-spacing: 0.4px;
+    letter-spacing: 0.2px;
 }
 
 .tagline {
-    font-size: 1.2rem; /* Smaller tagline on mobile */
-    color: var(--text-color);          /* Use theme variable */
-    margin-bottom: 20px; /* Reduced bottom margin for tagline */
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 12px;
     font-weight: 500;
     opacity: 0.85;
 }
 
 .overview {
-    color: var(--text-color);          /* Use theme variable */
-    line-height: 1.7;
-    font-size: 1rem; /* Smaller overview text on mobile */
-    max-width: 700px; /* Slightly narrower overview on mobile */
-    margin: 0 auto 25px; /* Reduced bottom margin for overview */
+    color: var(--text-color);
+    line-height: 1.5;
+    font-size: 0.9rem;
+    max-width: 95%;
+    margin: 0 auto 18px;
     opacity: 0.95;
     font-weight: 400;
 }
 
-
-/* Media Query for Desktop (Larger Screens) */
+/* ----------------------------------------------------- */
+/* Media Query for Desktop (Larger Screens - 768px and Up) */
+/* ----------------------------------------------------- */
 @media (min-width: 768px) {
     .home {
-        padding-top: 220px; /* Increased top padding on desktop */
-        text-align: left;    /* Left align text in Home section on desktop */
-        justify-content: flex-start; /* Align home content to the start on desktop */
+        padding-top: 180px;
+        text-align: left;
+        justify-content: flex-start;
     }
 
     .intro {
-        flex-direction: row;   /* Profile image and text side-by-side on desktop */
-        justify-content: space-around; /* Space out image and text on desktop */
-        align-items: center;     /* Vertically align image and text on desktop */
-        padding: 0 50px;      /* Increased horizontal padding on desktop */
-        text-align: left;      /* Left align text within intro on desktop */
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 35px;
+        text-align: left;
     }
 
     .profileImage {
-        width: 250px;        /* Larger profile image on desktop */
-        height: 250px;
-        margin-right: 40px;   /* Add right margin for image on desktop */
-        margin-bottom: 0;     /* Remove bottom margin on desktop */
-        box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25); /* Stronger shadow on desktop */
-        border: 4px solid var(--secondary-color); /* Use theme variable */
+        width: 220px;
+        height: 220px;
+        margin-right: 30px;
+        margin-bottom: 0;
+        box-shadow: 0 5px 16px rgba(0, 0, 0, 0.2);
+        border: 4px solid var(--secondary-color);
     }
     .profileImage:hover { transform: scale(1.05); }
 
 
     .text {
-        max-width: 600px;    /* Limit text width on desktop */
-        margin-top: 0;      /* Reset text top margin if any */
+        max-width: 700px;
+        margin-top: 0;
     }
 
     .text h1.name {
-        font-size: 3.5rem;    /* Larger name on desktop */
-        margin-bottom: 15px;  /* Adjusted bottom margin for name on desktop */
-        letter-spacing: 0.5px;
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        letter-spacing: 0.4px;
     }
 
     .tagline {
-        font-size: 1.4rem;    /* Larger tagline on desktop */
-        margin-bottom: 25px;  /* Adjusted bottom margin for tagline on desktop */
+        font-size: 1.2rem;
+        margin-bottom: 18px;
     }
 
     .overview {
-        font-size: 1.15rem;  /* Larger overview on desktop */
-        max-width: 750px;    /* Wider overview text area on desktop */
-        margin-bottom: 35px;  /* Adjusted bottom margin for overview on desktop */
+        font-size: 1.05rem;
+        max-width: 850px;
+        margin-bottom: 28px;
     }
 }
 
 
+/* ----------------------------------------------------- */
 /* General Section Styling - Consistent Padding & Alignment */
+/* ----------------------------------------------------- */
 .sectionBase {
-    padding: 90px 30px; /* Consistent vertical padding for sections */
+    padding: 70px 20px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center items in sections horizontally */
-    background-color: var(--secondary-color); /* Use theme variable */
-    color: var(--text-color);          /* Use theme variable */
+    align-items: center;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
-    text-align: center; /* Center text in sections by default, can be overridden */
+    text-align: center;
 }
 
 .sectionTitle {
-    font-size: 3rem;      /* Slightly smaller section titles */
+    font-size: 2.4rem;
     font-weight: bold;
-    color: var(--accent-color);     /* Use theme variable */
-    margin-bottom: 20px;  /* Consistent bottom margin for section titles */
-    text-align: left;    /* Ensure section titles are centered */
+    color: var(--accent-color);
+    margin-bottom: 16px;
+    text-align: center;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    letter-spacing: 0.8px;
-    margin-top: 200px;
+    letter-spacing: 0.5px;
+    margin-top: 130px;
 }
 
-
+/* ----------------------------------------------------- */
 /* About Section - Alignment and Content Width */
-
+/* ----------------------------------------------------- */
 .content {
-    max-width: 1100px;    /* Consistent content width for About section */
-    text-align: justify; /* Justify text in About content */
-    line-height: 1.8;
-    font-size: 1.1rem;
+    max-width: 95%;
+    text-align: justify;
+    line-height: 1.6;
+    font-size: 1rem;
     opacity: 1;
     font-weight: 400;
-    margin-bottom: 30px;  /* Consistent bottom margin for content blocks */
-    color: var(--text-color); /* ADDED: Use theme variable for text color */
+    margin-bottom: 22px;
+    color: var(--text-color);
 }
 .content p {
-    margin-bottom: 20px; /* Space between paragraphs in About */
-    color: var(--text-color); /* ADDED: Use theme variable for paragraph text */
+    margin-bottom: 16px;
+    color: var(--text-color);
 }
 
-
+/* ----------------------------------------------------- */
 /* About Contact Details - Consistent Styling */
+/* ----------------------------------------------------- */
 .aboutContactDetails {
-    margin-top: 40px;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: var(--card-background); /* Use theme variable */
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.09);
-    border: 1px solid var(--border-color);    /* Use theme variable */
+    margin-top: 30px;
+    padding: 16px;
+    border-radius: 6px;
+    background-color: var(--card-background);
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.07);
+    border: 1px solid var(--border-color);
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     text-align: left;
-    width: 90%;        /* Responsive width for contact details card */
-    max-width: 1100px;  /* Max width for contact details card */
-    color: var(--text-color); /* ADDED: Use theme variable for text color inside contact details */
+    width: 90%;
+    max-width: 95%;
+    color: var(--text-color);
 }
 
 .aboutContactDetails h3 {
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-    color: var(--accent-color);     /* Use theme variable */
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    color: var(--accent-color);
     text-align: center;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 .aboutContactDetails .contactList { margin-bottom: 0; }
 
-
-
+/* ----------------------------------------------------- */
 /* Skills Section - Grid Layout and Alignment */
-
+/* ----------------------------------------------------- */
 .categorizedSkills {
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    max-width: 1200px; /* Consistent max-width for skills categories */
-    margin-top: 30px;
-    width: 95%; /* Responsive width for categorized skills */
+    gap: 30px;
+    max-width: 95%;
+    margin-top: 20px;
+    width: 95%;
 }
 
-.skillCategory { margin-bottom: 20px; }
+.skillCategory { margin-bottom: 12px; }
 
 .skillCategoryTitle {
-    font-size: 2rem;      /* Slightly smaller category titles */
+    font-size: 1.6rem;
     font-weight: 600;
-    color: var(--accent-color);     /* Use theme variable */
-    margin-bottom: 25px;  /* Adjusted bottom margin for category titles */
+    color: var(--accent-color);
+    margin-bottom: 18px;
     text-align: center;
 }
 
 .skillsGrid {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Center skills in grid */
-    margin-top: 20px;
+    justify-content: center;
+    margin-top: 12px;
 }
 
-
+/* ----------------------------------------------------- */
 /* Projects Section - Grid Layout and Spacing */
-
+/* ----------------------------------------------------- */
 .projectsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(355px, 1fr)); /* Adjusted min-width for project cards */
-    gap: 35px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
     justify-content: center;
-    max-width: 1400px;
-    margin-top: 30px;
+    max-width: 95%;
+    margin-top: 20px;
     width: 95%;
 }
 
-
+/* ----------------------------------------------------- */
 /* Experience Section - List Alignment and Spacing */
+/* ----------------------------------------------------- */
 .experienceList {
-    max-width: 1400px;
-    margin-top: 30px;
+    max-width: 95%;
+    margin-top: 20px;
     width: 95%;
 }
 
 .experienceItem {
-    background-color: var(--card-background); /* Use theme variable */
-    padding: 30px;
-    border-radius: 12px;
-    margin-bottom: 30px;  /* Consistent bottom margin for experience items */
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--border-color);    /* Use theme variable */
+    background-color: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 11px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease-in-out;
-    text-align: left;      /* Left align text within experience items */
-    color: var(--text-color); /* ADDED: Use theme variable for text color inside experience item */
+    text-align: left;
+    color: var(--text-color);
 }
 .experienceItem:hover {
-    transform: translateY(-4px); /* Slightly less lift on hover */
-    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.14); /* Slightly less shadow on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.1);
 }
 
 .jobTitle {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 600;
-    color: var(--text-color);          /* Use theme variable */
-    margin-bottom: 10px;
+    color: var(--text-color);
+    margin-bottom: 6px;
 }
 .companyName {
-    font-size: 1.2rem;
-    color: var(--accent-color);     /* Use theme variable */
-    margin-bottom: 8px;
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    margin-bottom: 5px;
 }
 .dateLocation {
-    font-size: 1rem;
-    color: var(--text-color);          /* Use theme variable */
-    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 16px;
     opacity: 0.75;
 }
-.descriptionList {
-    padding-left: 20px;
-    margin-top: 10px;
-}
+.descriptionList { padding-left: 16px; margin-top: 6px; }
 .descriptionItem {
-    font-size: 1rem;
-    color: var(--text-color);          /* Use theme variable */
-    line-height: 1.7;
-    margin-bottom: 8px; /* Reduced bottom margin in description items */
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.5;
+    margin-bottom: 5px;
     list-style-type: disc;
     opacity: 0.9;
 }
 
-
-
-/* Education, Certificates, Courses, Achievements Sections - Consistent Styling */
+/* ----------------------------------------------------- */
+/* Education, Certificates, Courses, Achievements Sections - Consistent Styling - TARGETED FIXES HERE */
+/* ----------------------------------------------------- */
 .education, .courses, .achievements {
-
-    padding: 90px 30px; /* Consistent padding */
+    padding: 60px 15px; /* Further reduced padding for very small screens */
 }
 .educationList, .courseList, .achievementList {
-    max-width: 1100px;    /* Consistent max-width for lists */
-    margin-top: 30px;
-    width: 95%;        /* Responsive width for lists */
+    max-width: 98%; /* Slightly wider for lists to utilize more space */
+    margin-top: 15px; /* Reduced top margin for lists */
+    width: 98%; /* Slightly wider width for lists */
+    display: flex; /* Ensure flexbox is enabled */
+    flex-direction: column; /* Stack items vertically by default for better mobile behavior */
+    align-items: stretch; /* Stretch items to full width of the container */
 }
 .educationList, .achievementList {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Left align items in Education, Certificates, Achievements lists */
+    align-items: flex-start; /* Keep left alignment for Education, Achievements lists */
 }
 .courseList {
-    display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allow courses to wrap to multiple rows */
     justify-content: center; /* Center courses in Course List */
-    gap: 20px;
+    gap: 10px; /* Further reduced gap between courses for very small screens */
 }
 .courseCard, .educationCard, .achievementCard {
-    background-color: var(--card-background); /* Use theme variable */
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 25px;  /* Consistent bottom margin for cards */
-    box-shadow: var(--card-shadow);      /* Use theme variable */
-    border: 1px solid var(--border-color);    /* Use theme variable */
+    background-color: var(--card-background);
+    padding: 15px; /* Even further reduced padding for cards for very small screens */
+    border-radius: 6px; /* Even smaller border radius for cards */
+    margin-bottom: 15px; /* Even further reduced bottom margin for cards for very small screens */
+    box-shadow: var(--card-shadow-lightest);
+    border: 1px solid var(--border-color);
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease-in-out;
-    text-align: left;      /* Left align text in cards */
-    color: var(--text-color); /* ADDED: Use theme variable for text color inside cards */
+    text-align: left;
+    color: var(--text-color);
+    width: 100%; /* **NEW**: Make cards take full width of their container on mobile */
+    box-sizing: border-box; /* **NEW**: Ensure padding is inside width */
+    min-width: 0;       /* **NEW**: Allow cards to shrink below content width if necessary */
 }
 .courseCard:hover, .educationCard:hover, .achievementCard:hover {
-    transform: translateY(-3px); /* Slight lift on card hover */
-    box-shadow: var(--card-shadow-lg);    /* Use theme variable */
+    transform: translateY(-1px); /* Even further reduced lift on card hover */
+    box-shadow: var(--card-shadow-lg);
 }
 .cardTitle {
-    font-size: 1.3rem;
+    font-size: 1rem; /* Even smaller card titles for very small screens */
     font-weight: 600;
-    color: var(--text-color);          /* Use theme variable */
-    margin-bottom: 10px;
+    color: var(--text-color);
+    margin-bottom: 5px; /* Even reduced bottom margin for card titles */
+    word-wrap: break-word; /* **NEW**: Ensure card titles wrap if they are long */
 }
 .institution, .courseProvider {
-    font-size: 1.1rem;
-    color: var(--accent-color);     /* Use theme variable */
-    margin-bottom: 8px;
+    font-size: 0.9rem;  /* Even smaller institution/provider size for very small screens */
+    color: var(--accent-color);
+    margin-bottom: 4px; /* Even further reduced bottom margin for institution/provider */
+    word-wrap: break-word; /* **NEW**: Ensure institution/provider names wrap if they are long */
 }
 .dateRange, .duration {
-    font-size: 1rem;
-    color: var(--text-color);          /* Use theme variable */
+    font-size: 0.8rem; /* Even further reduced date/duration size for very small screens */
+    color: var(--text-color);
     opacity: 0.75;
-    margin-bottom: 15px;
+    margin-bottom: 8px; /* Even further reduced bottom margin for date/duration */
 }
 
-
-/* Contact Section - Alignment and Form Styling */
+/* ----------------------------------------------------- */
+/* Contact Section - Alignment and Form Styling - Refined Contact List Layout */
+/* ----------------------------------------------------- */
+.contactSection { padding-bottom: 100px; }
 
 .contactInfo {
-    max-width: 1100px;    /* Consistent max-width for contact info */
+    max-width: 95%;
     text-align: left;
-    margin-bottom: 30px;  /* Add margin below contact info */
+    margin-bottom: 20px;
 }
 .contactText {
-    font-size: 1.1rem;
-    color: var(--text-color);          /* Use theme variable */
-    margin-bottom: 30px;
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 20px;
     opacity: 0.9;
-    line-height: 1.7;
+    line-height: 1.5;
 }
 
 .contactList {
     list-style: none;
     padding: 0;
-    margin-bottom: 25px; /* Reduced margin below contact list */
-    display: flex;          /* Use flexbox for contact list */
-    flex-direction: column; /* Stack contact list items */
-    align-items: center;     /* Center contact list items */
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the start (left) */
 }
 
 .contactListItem {
-    margin-bottom: 18px;  /* Reduced margin between contact list items */
-    font-size: 1rem;
-    color: var(--text-color);          /* Use theme variable */
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    color: var(--text-color);
     opacity: 0.9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; /* Use Flexbox for list items */
+    flex-direction: row; /* Arrange label and detail in a row */
+    align-items: baseline; /* Align text baselines */
+    justify-content: flex-start; /* Left justify items */
+    gap: 10px; /* Add gap between label and detail */
 }
 
 .contactListItem strong {
     font-weight: 600;
-    color: var(--text-color);          /* Use theme variable */
-    margin-right: 10px;
-    text-align: left; /* Ensure strong text is left-aligned within item */
-    min-width: 80px; /* Minimum width for strong labels for alignment */
-    display: inline-block; /* Ensure min-width applies correctly */
+    color: var(--text-color);
+    text-align: left;
+    min-width: 80px; /* Increased min-width for labels */
+    display: inline-block; /* Keep as inline-block */
+    flex-shrink: 0; /* Prevent label from shrinking */
 }
 
 .contactListItem a {
-    color: var(--accent-color);     /* Use theme variable */
+    color: var(--accent-color);
     text-decoration: none;
     transition: color 0.3s ease;
-    border-bottom: 1px dotted var(--accent-color); /* Use theme variable */
-    padding-bottom: 2px;
+    border-bottom: 1px dotted var(--accent-color);
+    padding-bottom: 1px;
+    word-break: break-all; /* **NEW**: Allow long links to break */
 }
 .contactListItem a:hover {
-    color: var(--accent-hover-color); /* Use theme variable */
-    border-bottom-color: var(--accent-hover-color); /* Use theme variable */
+    color: var(--accent-hover-color);
+    border-bottom-color: var(--accent-hover-color);
 }
 
-
-/* Contact Form - Alignment and Spacing */
+/* ----------------------------------------------------- */
+/* Contact Form - Alignment and Spacing - Further Width Fixes */
+/* ----------------------------------------------------- */
 .contactForm {
-    max-width: 1100px;    /* Consistent max-width for contact form */
-    margin: 20px auto 0;
-    padding: 30px;
-    border-radius: 10px;
-    background-color: var(--card-background); /* Use theme variable */
-    box-shadow: var(--card-shadow);      /* Use theme variable */
-    border: 1px solid var(--border-color);    /* Use theme variable */
+    max-width: 95%; /* Take full width up to 95% of parent */
+    margin: 15px auto 0;
+    padding: 20px; /* Keep base padding, but may reduce on smaller screens */
+    border-radius: 7px;
+    background-color: var(--card-background);
+    box-shadow: var(--card-shadow-lightest);
+    border: 1px solid var(--border-color);
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    width: 90%;        /* Responsive width for contact form */
-    margin-left: auto; /* Center form horizontally */
+    width: 95%; /* Ensure width is 95% */
+    margin-left: auto;
     margin-right: auto;
-    color: var(--text-color); /* ADDED: Use theme variable for text color inside contact form */
+    color: var(--text-color);
+    box-sizing: border-box; /* Very important: Include padding and border in element's total width */
+    overflow-x: hidden; /* **NEW**:  Prevent horizontal scrollbar if content *slightly* overflows */
 }
 
-.formGroup { margin-bottom: 20px; /* Reduced margin between form groups */ }
+.formGroup { margin-bottom: 12px; }
 .formLabel {
     display: block;
-    margin-bottom: 8px;      /* Reduced margin below form labels */
+    margin-bottom: 5px;
     font-weight: 500;
-    color: var(--text-color);          /* Use theme variable */
-    font-size: 1rem;
-    letter-spacing: 0.3px;
-    text-align: left; /* Left align form labels */
+    color: var(--text-color);
+    font-size: 0.9rem;
+    letter-spacing: 0.1px;
+    text-align: left;
 }
 .formInput, .formTextarea {
     width: 100%;
-    padding: 12px;        /* Reduced padding in form inputs */
-    border-radius: 7px;
-    border: 1px solid var(--border-color);    /* Use theme variable */
-    background-color: var(--secondary-color); /* Use theme variable */
-    color: var(--text-color);          /* Use theme variable */
-    font-size: 0.95rem; /* Slightly smaller input text */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-size: 0.85rem;
     transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box; /* Very important: Include padding and border in input's total width */
+    min-width: 0; /* **NEW**: Allow inputs/textareas to shrink if necessary */
 }
 .formInput:focus, .formTextarea:focus {
     outline: none;
-    border-color: var(--accent-color);     /* Use theme variable */
-    box-shadow: 0 0 0 2px var(--accent-color-transparent), 0 0 5px rgba(var(--accent-color-rgb), 0.4); /* Slightly less intense focus shadow */
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px var(--accent-color-transparent), 0 0 3px rgba(var(--accent-color-rgb), 0.3);
 }
 .formTextarea { resize: vertical; }
 
-.submitButton { /* Consistent Submit Button Styling */
+.submitButton, .resumeButton { /* Consistent Button Styling - DRY principle applied */
     display: inline-block;
-    padding: 12px 28px; /* Consistent padding with resume button */
-    background-color: var(--accent-color);     /* Use theme variable */
-    color: var(--secondary-color);        /* Use theme variable */
+    padding: 9px 22px;
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
     border: none;
-    border-radius: 7px; /* Consistent border radius */
-    font-size: 1rem;      /* Consistent font size with resume button */
+    border-radius: 5px;
+    font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Consistent button shadow */
-    letter-spacing: 0.5px; /* Consistent letter spacing */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    letter-spacing: 0.3px;
+    box-sizing: border-box; /* **NEW**: Ensure button padding is included in width */
+    min-width: 0;        /* **NEW**: Allow buttons to shrink if necessary */
 }
-.submitButton:hover {
-    background-color: var(--accent-hover-color); /* Use theme variable */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Consistent hover shadow */
-}
-
-
-.resumeButton { /* Consistent Resume Button Styling */
-    display: inline-block;
-    padding: 12px 28px;
-    background-color: var(--accent-color);     /* Use theme variable */
-    color: var(--secondary-color);        /* Use theme variable */
-    text-decoration: none;
-    border-radius: 7px;
-    font-size: 1rem;
-    font-weight: 500;
-    margin-top: 30px; /* Adjusted top margin for resume button */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+.submitButton:hover, .resumeButton:hover {
+    background-color: var(--accent-hover-color);
+    transform: translateY(-1.5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    letter-spacing: 0.5px;
-}
-.resumeButton:hover {
-    background-color: var(--accent-hover-color); /* Use theme variable */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
+.resumeButton { margin-top: 20px; /* Further reduced top margin for resume button */ }
 
 
-
-
-/* Responsive adjustments for smaller screens (Mobile Specific Overrides) */
-@media (max-width: 767px) {
-    .home { padding-top: 150px; } /* Adjust home section top padding on mobile */
-    .sectionBase { padding: 70px 30px; } /* Adjust section base padding on mobile */
-    .sectionTitle { font-size: 2.6rem; margin-bottom: 40px; } /* Smaller section titles on mobile */
-    .skillCategoryTitle { font-size: 1.7rem; } /* Smaller skill category titles on mobile */
-    .experienceItem, .contactForm, .aboutContactDetails, .courseCard, .educationCard, .certificateCard, .achievementCard {
-        padding: 20px; /* Reduced card padding on mobile */
-        margin-bottom: 20px; /* Reduced card bottom margin on mobile */
+/* ----------------------------------------------------- */
+/* Media Query for Extra Small Screens (e.g., very narrow mobiles - up to 360px) */
+/* ----------------------------------------------------- */
+@media (max-width: 360px) {
+    .contactForm {
+        padding: 15px; /* **NEW**: Further reduced padding for very small screens */
     }
-    .projectsGrid { grid-template-columns: 1fr; } /* Single column project grid on mobile */
-    .courseList { flex-direction: column; align-items: center; } /* Stack courses on mobile */
-    .contactList { align-items: stretch; /* Stretch contact list items to full width on mobile */ }
-    .contactListItem { flex-direction: column; text-align: center; margin-bottom: 20px; } /* Stack contact items on mobile */
-    .contactListItem strong { margin-right: 0; margin-bottom: 5px; text-align: center; min-width: auto; } /* Center and adjust strong label on mobile */
-    .resumeButton, .submitButton { padding: 10px 24px; font-size: 0.9rem; } /* Smaller buttons on mobile */
-    .aboutContactDetails, .contactForm { margin-top: 25px; } /* Adjust contact card top margin on mobile */
-}
-
-/* Very small screens (e.g., older phones) adjustments - Optional */
-@media (max-width: 375px) {
-    .home, .sectionBase, .about, .skills, .projects, .experience, .education, .certificates, .courses, .achievements, .contact {
-        padding-left: 15px; padding-right: 15px; /* Further reduce horizontal padding on very small screens */
+    .submitButton, .resumeButton {
+        padding: 7px 18px; /* **NEW**: Even smaller button padding for very small screens */
+        font-size: 0.85rem; /* **NEW**: Slightly smaller button text for very small screens */
     }
-    .text h1.name { font-size: 2.3rem; } /* Further reduce name size on very small screens */
-    .tagline { font-size: 1.1rem; } /* Further reduce tagline size */
-    .overview { font-size: 0.9rem; } /* Further reduce overview size */
-    .sectionTitle { font-size: 2.3rem; } /* Further reduce section title size */
-    .skillCategoryTitle { font-size: 1.5rem; } /* Further reduce skill category title size */
-    .experienceItem, .contactForm, .aboutContactDetails, .courseCard, .educationCard, .certificateCard, .achievementCard {
-        padding: 15px; /* Further reduce card padding on very small screens */
-    }
-    .resumeButton, .submitButton { padding: 9px 20px; font-size: 0.85rem; } /* Further reduce button font and padding */
 }

@@ -85,26 +85,6 @@
     color: var(--secondary-color); /* Added: Ensure button text color is themed */
 }
 
-.themeToggleButton {
-    padding: 10px;
-    border: none;
-    border-radius: 50%;
-    background-color: transparent;
-    color: var(--accent-color);
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: color 0.3s ease, background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.themeToggleButton:hover {
-    background-color: var(--primary-color);
-    color: var(--accent-hover-color);
-}
-
 /* Burger Button Styles (for smaller screens) */
 .burgerButton {
     display: none; /* Hidden by default on larger screens */
@@ -113,7 +93,8 @@
     background-color: transparent;
     color: var(--text-color);
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.4rem; /* Increased burger button size */
+    height: auto;
 }
 
 .burgerButton:hover {
@@ -124,62 +105,73 @@
 /* Mobile Styles (smaller screens) */
 @media (max-width: 768px) {
     .navbar {
-        flex-direction: row; /* Keep logo and burger button in a row */
-        justify-content: space-between; /* Space logo and burger button */
-        align-items: center; /* Align items vertically */
-        padding: 15px 20px; /* Reduced padding for mobile */
+        flex-direction: column; /* Stack logo and burger button vertically */
+        justify-content: center; /* Center content vertically in navbar */
+        align-items: center; /* Center items horizontally */
+        padding: 20px; /* Adjust padding for mobile */
     }
 
     .logo {
-        margin-bottom: 0; /* Remove bottom margin for logo on mobile */
+        margin-bottom: 15px; /* Add bottom margin for logo on mobile to separate from burger */
+        text-align: center; /* Center logo text */
     }
 
     .burgerButton {
-        display: block; /* Show burger button on smaller screens */
+        display: block; /* Show burger button on mobile */
+        position: absolute; /* Position burger button */
+        top: 15px;      /* Adjust top position */
+        right: 20px;     /* Adjust right position */
     }
 
     .navLinks {
         display: none; /* Initially hide nav links on mobile */
         flex-direction: column; /* Stack nav links vertically */
-        position: absolute; /* Position nav links below navbar */
-        top: 60px; /* Adjust based on navbar height */
-        left: 0;
-        background-color: var(--secondary-color);
-        width: 100%;
+        width: 100%; /* Full width for mobile menu */
         text-align: center;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        padding: 20px 0; /* Add vertical padding to the mobile menu */
-        margin-top: 0; /* Reset top margin for mobile menu */
+        overflow: hidden;
         max-height: 0; /* Initially set max-height to 0 for animation */
-        overflow: hidden; /* Hide overflow content for animation */
+        margin-top: 10px; /* Add some space below the logo before menu */
+        background-color: var(--secondary-color); /* Ensure background color for mobile menu */
     }
 
     /* Mobile menu when open */
     .navLinksMobile {
         display: flex; /* Show nav links when menu is open */
-        max-height: 500px; /* Example max-height for menu animation - adjust as needed */
-        padding-bottom: 20px; /* Ensure padding is present when menu is open */
-        overflow: visible; /* Allow content to be visible when menu is open */
+        max-height: 600px; /* Increased max-height for more links - adjust as needed */
+        padding: 20px 0; /* Add vertical padding when menu is open */
+        overflow-y: auto; /* Enable vertical scroll if menu content exceeds max-height */
     }
 
 
     .navLinks li {
         margin-left: 0;
         margin-bottom: 15px; /* Spacing between links in mobile menu */
+        height: auto;
     }
 
     .navLink {
         display: block; /* Make nav links full width in mobile menu */
         padding: 12px 20px; /* Adjusted padding for mobile nav links */
+        text-align: center; /* Center text in mobile nav links */
     }
 
     .navActions {
-        display: none; /* Hide Resume and Theme Toggle buttons in mobile menu - adjust if you want to show them in mobile menu */
+        display: flex; /* Show Resume and Theme Toggle buttons in mobile menu */
+        flex-direction: column; /* Stack actions vertically in mobile menu */
+        align-items: center; /* Center actions horizontally */
+        margin-top: 15px; /* Add spacing above actions in mobile menu */
+    }
+
+    .resumeButton {
+        margin-left: 0; /* Remove left margin for button in mobile menu */
+        margin-bottom: 10px; /* Add bottom margin between buttons if stacked */
+        margin-right: 0; /* Remove right margin */
     }
 }
 
-/* Tablet Styles (example range: 769px to 1200px - adjust as needed) */
-@media (min-width: 769px) and (max-width: 1400px) { /* Adjusted max-width to 1400px as per your report */
+/* Tablet Styles (example range: 769px to 1400px - adjust as needed) */
+@media (min-width: 769px) and (max-width: 1400px) {
     .navbar {
         padding: 18px 25px; /* Slightly reduced padding for tablet */
     }
@@ -201,9 +193,5 @@
         padding: 9px 16px; /* Slightly smaller button padding on tablet */
         font-size: 0.95rem; /* Slightly smaller button text on tablet */
         margin-right: 10px; /* Reduced right margin for button on tablet */
-    }
-
-    .themeToggleButton {
-        padding: 8px; /* Slightly smaller theme toggle button on tablet */
     }
 }
