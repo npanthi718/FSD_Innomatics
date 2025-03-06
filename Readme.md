@@ -18,7 +18,8 @@ This repository contains all the work I have done during my internship at Innoma
 
 1. **Project 1**: Clone of Innomatics Research Labs Website (Used only Html & CSS)
 2. **Project 2**: Memory Matching Game (Used HTML, CSS and JavaScript)
-3. **Project 3**: Comming Soon
+3. **Project 3**: My Web Protfolio (Used React)
+4. **Project 4**: Comming Soon
 
 
 ## Assignments   (You can visit every Assignments Code Inside the Assignments Folder)
