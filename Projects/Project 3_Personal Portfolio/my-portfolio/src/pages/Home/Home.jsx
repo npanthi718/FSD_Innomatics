@@ -64,14 +64,13 @@ function Home() {
         },
         {
             title: 'Face Recognition Attendance System',
-            technologies: ['Python', 'Flask', 'OpenCV', 'Face Recognition Library', 'MySQL', 'HTML', 'CSS', 'JavaScript'],
+            technologies: ['Python 3.9', 'OpenCV 4.x', 'Face Recognition Library', 'Tkinter', 'Numpy', 'Pandas'],
             liveLink: null,
-            githubLink: 'popup',
+            githubLink: 'https://github.com/npanthi718/Face_Recognition_Attendance',
             keyContributions: [
                 'Developed a dynamic and efficient attendance system using Face Recognition Technology. The system automates attendance marking by detecting and identifying student faces from classroom photos.',
                 'The project allows teachers to take attendance by capturing a class photo, automatically marking students present or absent based on facerecognition. It also provides a dashboard for managing student details and viewing attendance records.',
                 'Architected a face detection and recognition module leveraging Flask, OpenCV, and Face Recognition Library; the tool is now used by over 20 employees across security teams.',
-                'Streamlined attendance management, reduced manual errors, and provided insightful analytics to help identify students with low attendance (below 70%).',
             ],
         },
     ];
