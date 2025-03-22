@@ -2,13 +2,6 @@
 
 Welcome to my repository! Here, I will be uploading all of my internship homework and projects assigned by Innomatics Research Labs. I am currently hired as a Full Stack Development Intern - Online.
 
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Projects](#projects)
-- [Assignments](#assignments)
-- [Technologies Used](#technologies-used)
-- [Contact](#contact)
 
 ## Introduction
 
@@ -19,7 +12,7 @@ This repository contains all the work I have done during my internship at Innoma
 1. **Project 1**: Clone of Innomatics Research Labs Website (Used only Html & CSS)
 2. **Project 2**: Memory Matching Game (Used HTML, CSS and JavaScript)
 3. **Project 3**: My Web Protfolio (Used React)
-4. **Project 4**: Comming Soon
+4. **Project 4**: Hospital_Management System of Lumbini Nepal Hospital
 
 
 ## Assignments   (You can visit every Assignments Code Inside the Assignments Folder)
@@ -40,7 +33,8 @@ This repository contains all the work I have done during my internship at Innoma
 
 4. **Assignment 4**: Shopping Cart Website (Using Html, CSS & JavaScript)
 5. **Assignment 5**: Advanced To-Do-App (Using React)
-6. **Assignment 6**: Comming Soon
+
+
 ## Technologies Used
 
 - HTML
