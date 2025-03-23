@@ -57,8 +57,8 @@ A comprehensive hospital management system built with the MERN stack (MongoDB, E
 3. Create .env file in backend directory with:
 
    ```
-   MONGO_URI=mongodb+srv://npanthi718:hospital_managemet_system@cluster0.ptnir.mongodb.net/lumbini_nepal_hospital
-   JWT_SECRET=your_secret_key_is_hospital_management_system
+   MONGO_URI= Your_MONGO_URI
+   JWT_SECRET=Your_JWT_SECRET_KEY
    PORT=5000
    ```
 
@@ -76,15 +76,15 @@ A comprehensive hospital management system built with the MERN stack (MongoDB, E
 
 ## Default Admin Credentials
 
-- Email: admin@lumbininepalhospital.com
-- Password: Admin@123
+- Email: director@lumbininepalhospital.com
+- Password: director123
 
 ## Default Doctor Credentials
 
-- Email: doctor@lumbininepalhospital.com
-- Password: Doctor@123
+- Email: doctorfirstname.lastname@lumbininepalhospital.com
+- Password: doctor@123
 
-## Default Patient Credentials
+## Patient Credentials
 
-- Email: patient@example.com
-- Password: Patient@123
+- Email: Your email id
+- Password: Your password while doing signup

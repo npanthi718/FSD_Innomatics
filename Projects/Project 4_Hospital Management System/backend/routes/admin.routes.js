@@ -4,32 +4,149 @@ const User = require('../models/user.model');
 const Doctor = require('../models/doctor.model');
 const Appointment = require('../models/appointment.model');
 const Department = require('../models/department.model');
-const { auth } = require('../middleware/auth');
-const admin = require('../middleware/admin');
+const { auth, authorize } = require('../middleware/auth');
+
+// Middleware to check if user is admin
+const adminCheck = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Access denied: Admin privileges required' });
+  }
+  next();
+};
+
+// Apply admin check to all routes
+router.use(auth);
+router.use(adminCheck);
 
 // Get dashboard stats
-router.get('/stats', [auth, admin], async (req, res) => {
+router.get('/stats', async (req, res) => {
   try {
-    const [doctors, patients, appointments, pendingApprovals] = await Promise.all([
+    const [totalDoctors, totalPatients, appointments] = await Promise.all([
       Doctor.countDocuments(),
       User.countDocuments({ role: 'patient' }),
-      Appointment.countDocuments(),
-      Doctor.countDocuments({ status: 'pending' })
+      Appointment.find()
     ]);
 
+    const pendingApprovals = appointments.filter(apt => apt.status === 'pending').length;
+
     res.json({
-      totalDoctors: doctors,
-      totalPatients: patients,
-      totalAppointments: appointments,
-      pendingApprovals: pendingApprovals
+      totalDoctors,
+      totalPatients,
+      totalAppointments: appointments.length,
+      pendingApprovals
     });
   } catch (error) {
+    console.error('Error fetching stats:', error);
     res.status(500).json({ message: 'Error fetching stats', error: error.message });
   }
 });
 
+// Get all appointments (admin only)
+router.get('/appointments', async (req, res) => {
+  try {
+    console.log('Fetching appointments for admin...');
+    
+    // Fetch all appointments with populated data
+    const appointments = await Appointment.find()
+      .populate({
+        path: 'patientId',
+        select: 'name email profilePhoto phoneNumber'
+      })
+      .populate({
+        path: 'doctorId',
+        populate: {
+          path: 'department',
+          select: 'name'
+        }
+      })
+      .sort({ date: -1 })
+      .lean();
+
+    console.log(`Found ${appointments?.length || 0} appointments`);
+
+    if (!appointments || appointments.length === 0) {
+      console.log('No appointments found');
+      return res.json({
+        appointments: [],
+        categorizedAppointments: {
+          today: [],
+          upcoming: [],
+          past: []
+        },
+        stats: {
+          totalAppointments: 0,
+          pendingAppointments: 0,
+          todayAppointments: 0,
+          upcomingAppointments: 0,
+          pastAppointments: 0
+        }
+      });
+    }
+
+    // Get today's date at midnight
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Filter appointments by date with proper date handling
+    const todayAppointments = appointments.filter(apt => {
+      if (!apt.date) return false;
+      const aptDate = new Date(apt.date);
+      aptDate.setHours(0, 0, 0, 0);
+      return aptDate.getTime() === today.getTime();
+    });
+
+    const upcomingAppointments = appointments.filter(apt => {
+      if (!apt.date) return false;
+      const aptDate = new Date(apt.date);
+      aptDate.setHours(0, 0, 0, 0);
+      return aptDate > today && apt.status !== 'completed' && apt.status !== 'cancelled';
+    });
+
+    const pastAppointments = appointments.filter(apt => {
+      if (!apt.date) return false;
+      const aptDate = new Date(apt.date);
+      aptDate.setHours(0, 0, 0, 0);
+      return aptDate < today || apt.status === 'completed' || apt.status === 'cancelled';
+    });
+
+    // Calculate stats
+    const stats = {
+      totalAppointments: appointments.length,
+      pendingAppointments: appointments.filter(apt => apt.status === 'pending').length,
+      todayAppointments: todayAppointments.length,
+      upcomingAppointments: upcomingAppointments.length,
+      pastAppointments: pastAppointments.length,
+      completedAppointments: appointments.filter(apt => apt.status === 'completed').length
+    };
+
+    // Log the response for debugging
+    console.log('Sending appointments response:', {
+      totalAppointments: appointments.length,
+      todayAppointments: todayAppointments.length,
+      upcomingAppointments: upcomingAppointments.length,
+      pastAppointments: pastAppointments.length
+    });
+    
+    res.json({
+      appointments,
+      categorizedAppointments: {
+        today: todayAppointments,
+        upcoming: upcomingAppointments,
+        past: pastAppointments
+      },
+      stats
+    });
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    res.status(500).json({ 
+      message: 'Error fetching appointments',
+      error: error.message 
+    });
+  }
+});
+
 // Get all doctors
-router.get('/doctors', [auth, admin], async (req, res) => {
+router.get('/doctors', async (req, res) => {
   try {
     const doctors = await Doctor.find()
       .populate({
@@ -45,7 +162,7 @@ router.get('/doctors', [auth, admin], async (req, res) => {
 });
 
 // Get all patients
-router.get('/patients', [auth, admin], async (req, res) => {
+router.get('/patients', async (req, res) => {
   try {
     const patients = await User.find({ role: 'patient' }).select('-password');
     res.json(patients);
@@ -54,57 +171,8 @@ router.get('/patients', [auth, admin], async (req, res) => {
   }
 });
 
-// Get all appointments
-router.get('/appointments', [auth, admin], async (req, res) => {
-  try {
-    const appointments = await Appointment.find()
-      .populate({
-        path: 'doctorId',
-        populate: [
-          {
-            path: 'userId',
-            select: 'name email'
-          },
-          {
-            path: 'department',
-            select: 'name'
-          }
-        ]
-      })
-      .populate('patientId', 'name email')
-      .sort({ date: 1 });
-
-    // Calculate stats
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const todayAppointments = appointments.filter(apt => {
-      const aptDate = new Date(apt.date);
-      return aptDate >= today && aptDate < tomorrow;
-    });
-
-    const pendingAppointments = appointments.filter(apt => apt.status === 'pending');
-    const completedAppointments = appointments.filter(apt => apt.status === 'completed');
-
-    res.json({
-      appointments,
-      stats: {
-        today: todayAppointments.length,
-        pending: pendingAppointments.length,
-        completed: completedAppointments.length,
-        total: appointments.length
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching appointments:', error);
-    res.status(500).json({ message: 'Error fetching appointments', error: error.message });
-  }
-});
-
 // Get all departments
-router.get('/departments', [auth, admin], async (req, res) => {
+router.get('/departments', async (req, res) => {
   try {
     const departments = await Department.find();
     res.json(departments);
@@ -114,19 +182,65 @@ router.get('/departments', [auth, admin], async (req, res) => {
 });
 
 // Update appointment status
-router.put('/appointments/:id/status', [auth, admin], async (req, res) => {
+router.patch('/appointments/:id/status', async (req, res) => {
   try {
-    const appointment = await Appointment.findByIdAndUpdate(
-      req.params.id,
-      { status: req.body.status },
-      { new: true }
-    );
+    const { id } = req.params;
+    const { status, cancellationReason } = req.body;
+
+    // Validate appointment ID
+    if (!id) {
+      return res.status(400).json({ message: 'Appointment ID is required' });
+    }
+
+    const appointment = await Appointment.findById(id);
+
     if (!appointment) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
-    res.json(appointment);
+
+    // Only allow specific status transitions
+    const allowedStatuses = ['confirmed', 'cancelled', 'completed', 'pending'];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    // Require cancellation reason when cancelling
+    if (status === 'cancelled' && !cancellationReason) {
+      return res.status(400).json({ message: 'Cancellation reason is required' });
+    }
+
+    // Update the appointment
+    appointment.status = status;
+    if (status === 'cancelled') {
+      appointment.cancellationReason = cancellationReason;
+    }
+
+    await appointment.save();
+
+    // Return updated appointment with populated fields
+    const updatedAppointment = await Appointment.findById(appointment._id)
+      .populate('patientId', 'name email profilePhoto')
+      .populate({
+        path: 'doctorId',
+        populate: {
+          path: 'department',
+          select: 'name'
+        }
+      })
+      .lean();
+
+    console.log('Appointment status updated:', {
+      id: updatedAppointment._id,
+      status: updatedAppointment.status
+    });
+
+    res.json(updatedAppointment);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating appointment', error: error.message });
+    console.error('Error updating appointment status:', error);
+    res.status(500).json({ 
+      message: 'Error updating appointment status',
+      error: error.message
+    });
   }
 });
 

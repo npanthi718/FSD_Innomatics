@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/user.model');
@@ -45,6 +46,10 @@ router.post('/register', validateRegistration, async (req, res) => {
             address
         });
 
+        // Hash password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+
         await user.save();
 
         // If role is doctor, create doctor profile
@@ -61,24 +66,24 @@ router.post('/register', validateRegistration, async (req, res) => {
             await doctor.save();
         }
 
-        // Generate JWT token
+        // Create token
         const token = jwt.sign(
-            { userId: user._id },
+            { _id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
 
+        // Remove password from response
+        const userResponse = user.toObject();
+        delete userResponse.password;
+
         res.status(201).json({
             token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
+            user: userResponse
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Error registering user', error: error.message });
     }
 });
 
@@ -92,58 +97,56 @@ router.post('/login', validateLogin, async (req, res) => {
 
         const { email, password } = req.body;
 
-        // Find user
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Please provide email and password' });
+        }
+
+        // Check if user exists
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Check password
-        const isMatch = await user.comparePassword(password);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        // Generate JWT token
+        // Create token
         const token = jwt.sign(
-            { userId: user._id },
+            { _id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
 
+        // Remove password from response
+        const userResponse = user.toObject();
+        delete userResponse.password;
+
         res.json({
             token,
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
+            user: userResponse
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Error logging in', error: error.message });
     }
 });
 
 // Get current user
 router.get('/me', auth, async (req, res) => {
     try {
+        // User is already attached to req by auth middleware
         const user = await User.findById(req.user._id).select('-password');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-        // If user is a doctor, include doctor profile
-        if (user.role === 'doctor') {
-            const doctor = await Doctor.findOne({ userId: user._id });
-            if (doctor) {
-                user.doctorProfile = doctor;
-            }
-        }
-
         res.json(user);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Error fetching user:', error);
+        res.status(500).json({ message: 'Error fetching user data', error: error.message });
     }
 });
 

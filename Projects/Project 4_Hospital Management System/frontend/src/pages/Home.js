@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -18,7 +18,7 @@ import {
   ListItemText,
   ListItemAvatar,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
 import {
   LocalHospital,
   People,
@@ -28,31 +28,32 @@ import {
   Assignment,
   History,
   Star,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 const features = [
   {
     icon: <LocalHospital fontSize="large" />,
-    title: 'Modern Facilities',
-    description: 'State-of-the-art medical equipment and comfortable patient rooms.',
+    title: "Modern Facilities",
+    description:
+      "State-of-the-art medical equipment and comfortable patient rooms.",
   },
   {
     icon: <People fontSize="large" />,
-    title: 'Expert Doctors',
-    description: 'Highly qualified and experienced medical professionals.',
+    title: "Expert Doctors",
+    description: "Highly qualified and experienced medical professionals.",
   },
   {
     icon: <AccessTime fontSize="large" />,
-    title: '24/7 Service',
-    description: 'Round-the-clock emergency and medical services.',
+    title: "24/7 Service",
+    description: "Round-the-clock emergency and medical services.",
   },
   {
     icon: <MedicalServices fontSize="large" />,
-    title: 'Comprehensive Care',
-    description: 'Wide range of medical specialties and treatment options.',
+    title: "Comprehensive Care",
+    description: "Wide range of medical specialties and treatment options.",
   },
 ];
 
@@ -70,14 +71,14 @@ const Home = () => {
     const handleNavigation = () => {
       if (user) {
         switch (user.role) {
-          case 'doctor':
-            navigate('/doctor/dashboard');
+          case "doctor":
+            navigate("/doctor/dashboard");
             break;
-          case 'admin':
-            navigate('/admin/dashboard');
+          case "admin":
+            navigate("/admin/dashboard");
             break;
-          case 'patient':
-            navigate('/patient/dashboard');
+          case "patient":
+            navigate("/patient/dashboard");
             break;
           default:
             break;
@@ -92,10 +93,10 @@ const Home = () => {
     const fetchData = async () => {
       if (!user) {
         try {
-          const response = await axios.get('http://localhost:5000/api/doctors');
+          const response = await axios.get("http://localhost:5000/api/doctors");
           setDoctors(response.data);
         } catch (error) {
-          console.error('Error fetching doctors:', error);
+          console.error("Error fetching doctors:", error);
         }
       }
       setLoading(false);
@@ -110,9 +111,9 @@ const Home = () => {
 
   const handleBookAppointment = () => {
     if (!user) {
-      navigate('/login');
+      navigate("/login");
     } else {
-      navigate('/appointments/book');
+      navigate("/appointments/book");
     }
   };
 
@@ -124,7 +125,12 @@ const Home = () => {
   // If still loading, show loading state
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="80vh"
+      >
         <CircularProgress />
       </Box>
     );
@@ -140,12 +146,16 @@ const Home = () => {
           <Grid item xs={12} md={4}>
             <Card>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <CalendarToday color="primary" sx={{ mr: 1 }} />
                   <Typography variant="h6">Upcoming Appointments</Typography>
                 </Box>
                 <Typography variant="h4" color="primary">
-                  {userAppointments.filter(apt => new Date(apt.date) > new Date()).length}
+                  {
+                    userAppointments.filter(
+                      (apt) => new Date(apt.date) > new Date()
+                    ).length
+                  }
                 </Typography>
               </CardContent>
             </Card>
@@ -153,7 +163,7 @@ const Home = () => {
           <Grid item xs={12} md={4}>
             <Card>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <Assignment color="secondary" sx={{ mr: 1 }} />
                   <Typography variant="h6">Prescriptions</Typography>
                 </Box>
@@ -166,12 +176,16 @@ const Home = () => {
           <Grid item xs={12} md={4}>
             <Card>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <History color="info" sx={{ mr: 1 }} />
                   <Typography variant="h6">Past Appointments</Typography>
                 </Box>
                 <Typography variant="h4" color="info.main">
-                  {userAppointments.filter(apt => new Date(apt.date) < new Date()).length}
+                  {
+                    userAppointments.filter(
+                      (apt) => new Date(apt.date) < new Date()
+                    ).length
+                  }
                 </Typography>
               </CardContent>
             </Card>
@@ -192,7 +206,12 @@ const Home = () => {
 
   const renderHospitalInfo = () => (
     <Box>
-      <Tabs value={activeTab} onChange={handleTabChange} centered sx={{ mb: 4 }}>
+      <Tabs
+        value={activeTab}
+        onChange={handleTabChange}
+        centered
+        sx={{ mb: 4 }}
+      >
         <Tab label="About Us" />
         <Tab label="Our Doctors" />
         <Tab label="Services" />
@@ -205,36 +224,40 @@ const Home = () => {
             About Lumbini Nepal Hospital
           </Typography>
           <Typography paragraph>
-            Established in 2010, Lumbini Nepal Hospital has been at the forefront of medical excellence
-            and patient care in Nepal. Our state-of-the-art facility spans over 50,000 square feet and
-            houses the latest medical technology and equipment.
+            Established in 2010, Lumbini Nepal Hospital has been at the
+            forefront of medical excellence and patient care in Nepal. Our
+            state-of-the-art facility spans over 50,000 square feet and houses
+            the latest medical technology and equipment.
           </Typography>
           <Typography paragraph>
-            We are committed to providing comprehensive healthcare services with compassion and
-            excellence. Our team of experienced medical professionals works tirelessly to ensure the
-            highest standards of patient care and safety.
+            We are committed to providing comprehensive healthcare services with
+            compassion and excellence. Our team of experienced medical
+            professionals works tirelessly to ensure the highest standards of
+            patient care and safety.
           </Typography>
           <Box sx={{ my: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <Paper sx={{ p: 3, height: '100%' }}>
+                <Paper sx={{ p: 3, height: "100%" }}>
                   <Typography variant="h6" gutterBottom>
                     Our Mission
                   </Typography>
                   <Typography>
-                    To provide accessible, high-quality healthcare services to all members of our
-                    community while advancing medical knowledge through research and education.
+                    To provide accessible, high-quality healthcare services to
+                    all members of our community while advancing medical
+                    knowledge through research and education.
                   </Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Paper sx={{ p: 3, height: '100%' }}>
+                <Paper sx={{ p: 3, height: "100%" }}>
                   <Typography variant="h6" gutterBottom>
                     Our Vision
                   </Typography>
                   <Typography>
-                    To be the leading healthcare institution in Nepal, recognized for excellence in
-                    patient care, medical education, and research.
+                    To be the leading healthcare institution in Nepal,
+                    recognized for excellence in patient care, medical
+                    education, and research.
                   </Typography>
                 </Paper>
               </Grid>
@@ -253,20 +276,22 @@ const Home = () => {
               <Grid item xs={12} sm={6} md={4} key={doctor.id}>
                 <Card>
                   <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                       <Avatar
-                        src={doctor.image || ''}
+                        src={doctor.image || ""}
                         sx={{ width: 64, height: 64, mr: 2 }}
                       />
                       <Box>
                         <Typography variant="h6">{doctor.name}</Typography>
-                        <Typography color="textSecondary">{doctor.specialization}</Typography>
+                        <Typography color="textSecondary">
+                          {doctor.specialization}
+                        </Typography>
                       </Box>
                     </Box>
                     <Typography variant="body2" paragraph>
                       {doctor.description}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
                       <Star sx={{ color: theme.palette.warning.main, mr: 1 }} />
                       <Typography variant="body2">
                         {doctor.rating} ({doctor.reviewCount} reviews)
@@ -288,9 +313,9 @@ const Home = () => {
           <Grid container spacing={4}>
             {features.map((feature, index) => (
               <Grid item xs={12} sm={6} key={index}>
-                <Card sx={{ height: '100%' }}>
+                <Card sx={{ height: "100%" }}>
                   <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                       <Box sx={{ color: theme.palette.primary.main, mr: 2 }}>
                         {feature.icon}
                       </Box>
@@ -313,21 +338,21 @@ const Home = () => {
             Hospital Management
           </Typography>
           <Paper sx={{ p: 3, mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
               <Avatar
-                src="/images/director.jpg"
+                src="/images/management/CEO2.jpg"
                 sx={{ width: 120, height: 120, mr: 3 }}
               />
               <Box>
                 <Typography variant="h5" gutterBottom>
-                  Dr. Rajesh Kumar
+                  Dr. Sushil Panthi
                 </Typography>
                 <Typography variant="subtitle1" color="primary" gutterBottom>
-                  Hospital Director
+                  Chief Executive Officer
                 </Typography>
                 <Typography variant="body2">
-                  With over 25 years of experience in healthcare management, Dr. Kumar leads our
-                  institution with a vision for excellence and innovation in healthcare delivery.
+                  Leading the hospital with over 15 years of healthcare
+                  management experience.
                 </Typography>
               </Box>
             </Box>
@@ -338,31 +363,85 @@ const Home = () => {
           <List>
             {[
               {
-                name: 'Dr. Sarah Johnson',
-                role: 'Medical Director',
-                description: 'Oversees all medical operations and quality of care',
+                name: "Dr. Gyan Prasad",
+                role: "Chief Operations Officer",
+                description:
+                  "Ensuring hospital operations run smoothly with expertise in healthcare logistics.",
+                image: "/images/management/COC.jpg",
               },
               {
-                name: 'Mr. David Chen',
-                role: 'Administrative Director',
-                description: 'Manages hospital operations and administrative functions',
+                name: "Dr. Dasrath Chad",
+                role: "Chief Financial Officer",
+                description:
+                  "Managing hospital finances with over a decade of experience in healthcare budgeting.",
+                image: "/images/management/CFO.jpg",
               },
               {
-                name: 'Dr. Maria Garcia',
-                role: 'Chief of Medical Staff',
-                description: 'Coordinates between management and medical staff',
+                name: "Dr. Goma Pandey",
+                role: "Chief Medical Officer",
+                description:
+                  "Supervising medical staff and fostering excellent patient care practices.",
+                image: "/images/management/CMO.jpg",
+              },
+              {
+                name: "Ms. Sareeta Karki",
+                role: "Chief Nursing Officer",
+                description:
+                  "Leading the nursing team to provide quality patient care services.",
+                image: "/images/management/CNO.jpg",
+              },
+              {
+                name: "Mr. Bhagirath Singh",
+                role: "Administrative Director",
+                description:
+                  "Overseeing non-medical operations and ensuring administrative processes align with the hospital’s goals.",
+                image: "/images/management/AD.jpg",
+              },
+              {
+                name: "Mr. Nawaraj Karki",
+                role: "Hospital Administrator",
+                description:
+                  "Overseeing daily administrative tasks to ensure seamless operations.",
+                image: "/images/management/HA.jpg",
+              },
+              {
+                name: "Ms. Samjhana Panthi",
+                role: "Director of Human Resources",
+                description:
+                  "Managing recruitment and staff relations to foster a healthy work environment.",
+                image: "/images/management/DHR.jpg",
+              },
+              {
+                name: "Dr. Roshan Bhandari",
+                role: "Director of Patient Services",
+                description:
+                  "Ensuring patient satisfaction through streamlined service delivery.",
+                image: "/images/management/DPS.jpg",
+              },
+              {
+                name: "Mr. Pralad Phuyal",
+                role: "Director of Marketing and Public Relations",
+                description:
+                  "Promoting hospital services and managing its public image effectively.",
+                image: "/images/management/DMPR.jpg",
               },
             ].map((member, index) => (
               <React.Fragment key={index}>
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
-                    <Avatar>{member.name[0]}</Avatar>
+                    <Avatar src={member.image} alt={member.name}>
+                      {!member.image && member.name[0]}
+                    </Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={member.name}
                     secondary={
                       <>
-                        <Typography component="span" variant="subtitle2" color="primary">
+                        <Typography
+                          component="span"
+                          variant="subtitle2"
+                          color="primary"
+                        >
                           {member.role}
                         </Typography>
                         <br />
@@ -385,10 +464,10 @@ const Home = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          bgcolor: 'primary.main',
-          color: 'white',
+          bgcolor: "primary.main",
+          color: "white",
           py: 8,
-          borderRadius: { xs: 0, md: '0 0 50px 50px' },
+          borderRadius: { xs: 0, md: "0 0 50px 50px" },
         }}
       >
         <Container maxWidth="lg">
@@ -398,13 +477,14 @@ const Home = () => {
                 Nepal Hospital
               </Typography>
               <Typography variant="h5" gutterBottom>
-                Providing quality healthcare services with compassion and excellence
+                Providing quality healthcare services with compassion and
+                excellence
               </Typography>
               <Button
                 variant="contained"
                 color="secondary"
                 size="large"
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 sx={{ mt: 4 }}
               >
                 Book Appointment
@@ -413,16 +493,17 @@ const Home = () => {
             <Grid item xs={12} md={6}>
               <Box
                 component="img"
-                src="/images/hospital-hero.jpg"
+                src="/images/hospital.png"
                 alt="Hospital"
                 sx={{
-                  width: '100%',
-                  height: 'auto',
-                  borderRadius: 2,
-                  boxShadow: 3,
+                  width: "100%",
+                  height: "400px",
+                  borderRadius: 10,
+                  boxShadow: 5,
                 }}
                 onError={(e) => {
-                  e.target.src = 'https://source.unsplash.com/800x600/?hospital';
+                  e.target.src =
+                    "https://source.unsplash.com/800x600/?hospital";
                 }}
               />
             </Grid>
@@ -439,4 +520,4 @@ const Home = () => {
   );
 };
 
-export default Home; 
+export default Home;

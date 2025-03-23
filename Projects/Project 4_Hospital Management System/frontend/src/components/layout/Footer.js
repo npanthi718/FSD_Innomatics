@@ -39,20 +39,17 @@ const Footer = () => {
               Lumbini Nepal Hospital
             </Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
-              Providing quality healthcare services to our community since 2024.
+              Providing quality healthcare services to our community since 2010.
               We are committed to excellence in patient care and medical innovation.
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <IconButton color="inherit" size="small">
+              <IconButton color="inherit" size="small" href='https://www.facebook.com/sushil.panthi.900' target='_blank'>
                 <Facebook />
               </IconButton>
-              <IconButton color="inherit" size="small">
-                <Twitter />
-              </IconButton>
-              <IconButton color="inherit" size="small">
+              <IconButton color="inherit" size="small" href='https://www.instagram.com/official_sushil_panthi/?hl=en' target='_blank'>
                 <Instagram />
               </IconButton>
-              <IconButton color="inherit" size="small">
+              <IconButton color="inherit" size="small" href='https://www.linkedin.com/in/sushilpanthi/' target='_blank'>
                 <LinkedIn />
               </IconButton>
             </Box>
@@ -73,7 +70,7 @@ const Footer = () => {
               <Link href="/appointments" color="inherit" underline="none">
                 Book Appointment
               </Link>
-              <Link href="/about" color="inherit" underline="none">
+              <Link href="/aboutus" color="inherit" underline="none">
                 About Us
               </Link>
               <Link href="/contact" color="inherit" underline="none">
@@ -91,20 +88,22 @@ const Footer = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Phone fontSize="small" />
                 <Typography variant="body2">
-                  +977 1234567890
+                  +977 9823009467
+                  +977 9863462642
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Email fontSize="small" />
                 <Typography variant="body2">
                   info@lumbininepalhospital.com
+                  npanthi718@gmail.com
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                 <LocationOn fontSize="small" />
                 <Typography variant="body2">
-                  123 Hospital Street,<br />
-                  Lumbini Province, Nepal
+                  Saljhandi-10, Sainamaina, Butwal, Rupandehi<br />
+                  District, Lumbini Province, Nepal
                 </Typography>
               </Box>
             </Box>
@@ -122,7 +121,7 @@ const Footer = () => {
           }}
         >
           <Typography variant="body2">
-            © {new Date().getFullYear()} Lumbini Nepal Hospital. All rights reserved.
+            © {new Date().getFullYear()} Lumbini Nepal Hospital. All rights reserved @ Sushil Panthi.
           </Typography>
         </Box>
       </Container>

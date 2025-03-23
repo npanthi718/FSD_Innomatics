@@ -9,6 +9,7 @@ const prescriptionRoutes = require('./routes/prescription.routes');
 const departmentRoutes = require('./routes/department.routes');
 const doctorRoutes = require('./routes/doctor.routes');
 const adminRoutes = require('./routes/admin.routes');
+const patientRoutes = require('./routes/patient.routes');
 
 // Load environment variables
 dotenv.config();
@@ -16,8 +17,16 @@ dotenv.config();
 // Create Express app
 const app = express();
 
+// CORS Configuration
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -77,6 +86,7 @@ app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/patient', patientRoutes);
 
 // Error logging middleware
 app.use((err, req, res, next) => {

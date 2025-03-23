@@ -26,6 +26,7 @@ import {
   Tab,
   Avatar,
   Tooltip,
+  CircularProgress,
 } from '@mui/material';
 import {
   People as PeopleIcon,
@@ -41,105 +42,181 @@ import {
   Edit,
   Assignment,
   Search,
+  Delete as DeleteIcon,
+  EventNote,
+  Schedule,
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { format } from 'date-fns';
 
+// Create an axios instance with base URL and default headers
+const api = axios.create({
+  baseURL: 'http://localhost:5000/api',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Add request interceptor to add token and log requests
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Log complete request details for debugging
+    console.log('Request:', {
+      url: `${config.baseURL}${config.url}`,
+      method: config.method,
+      headers: config.headers,
+      data: config.data
+    });
+    return config;
+  },
+  (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => {
+    console.log('Response:', {
+      url: response.config.url,
+      status: response.status,
+      data: response.data
+    });
+    return response;
+  },
+  (error) => {
+    console.error('API Error:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      message: error.response?.data?.message || error.message,
+      data: error.response?.data
+    });
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
-    totalPatients: 0,
-    todayAppointments: 0,
+    totalAppointments: 0,
     pendingAppointments: 0,
+    confirmedAppointments: 0,
     completedAppointments: 0,
+    cancelledAppointments: 0
   });
   const [appointments, setAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [openPrescriptionDialog, setOpenPrescriptionDialog] = useState(false);
   const [prescriptionNote, setPrescriptionNote] = useState('');
   const [activeTab, setActiveTab] = useState(0);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(true);
   const [viewPrescriptionDialog, setViewPrescriptionDialog] = useState(false);
   const [selectedPrescriptionData, setSelectedPrescriptionData] = useState(null);
+  const [prescriptionDialogOpen, setPrescriptionDialogOpen] = useState(false);
+  const [prescriptionData, setPrescriptionData] = useState({
+    diagnosis: '',
+    medicines: [],
+    tests: [],
+    notes: '',
+    followUpDate: null
+  });
 
+  // Session timeout handling
+  useEffect(() => {
+    let inactivityTimer;
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        console.log('Session timeout - logging out');
+        logout();
+        navigate('/login');
+      }, SESSION_TIMEOUT);
+    };
+
+    // Reset timer on user activity
+    const handleUserActivity = () => {
+      resetTimer();
+    };
+
+    // Add event listeners for user activity
+    window.addEventListener('mousemove', handleUserActivity);
+    window.addEventListener('keydown', handleUserActivity);
+    window.addEventListener('click', handleUserActivity);
+
+    // Initial timer setup
+    resetTimer();
+
+    // Cleanup
+    return () => {
+      clearTimeout(inactivityTimer);
+      window.removeEventListener('mousemove', handleUserActivity);
+      window.removeEventListener('keydown', handleUserActivity);
+      window.removeEventListener('click', handleUserActivity);
+    };
+  }, [logout, navigate]);
+
+  // Fetch dashboard data
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
-      setError('');
-      
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to access the dashboard');
-        setLoading(false);
-        return;
+      setError(null);
+      console.log('Fetching dashboard data...');
+
+      // Fix: Use the correct appointments endpoint
+      const appointmentsRes = await api.get('/doctors/appointments');
+      console.log('Appointments response:', appointmentsRes.data);
+
+      if (!Array.isArray(appointmentsRes.data)) {
+        throw new Error('Invalid appointments data received');
       }
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
+      // Sort appointments by date in descending order
+      const sortedAppointments = appointmentsRes.data.sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+      );
 
-      // Get appointments - the backend will handle doctor filtering
-      const appointmentsResponse = await axios.get('/api/appointments', config);
-      
-      if (!appointmentsResponse.data || !appointmentsResponse.data.appointments) {
-        throw new Error('No appointments data received');
-      }
+      setAppointments(sortedAppointments);
 
-      const allAppointments = appointmentsResponse.data.appointments;
-      
-      // Get today's date at midnight for comparison
+      // Calculate stats from appointments
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      // Filter appointments for different categories
-      const todayAppointments = allAppointments.filter(apt => {
-        const aptDate = new Date(apt.date);
-        aptDate.setHours(0, 0, 0, 0);
-        return aptDate.getTime() === today.getTime();
-      });
+      const stats = {
+        totalAppointments: sortedAppointments.length,
+        pendingAppointments: sortedAppointments.filter(a => a.status === 'pending').length,
+        confirmedAppointments: sortedAppointments.filter(a => {
+          const aptDate = new Date(a.date);
+          aptDate.setHours(0, 0, 0, 0);
+          return aptDate.getTime() === today.getTime() && a.status === 'confirmed';
+        }).length,
+        completedAppointments: sortedAppointments.filter(a => a.status === 'completed').length,
+        cancelledAppointments: sortedAppointments.filter(a => a.status === 'cancelled').length
+      };
 
-      const pendingAppointments = allAppointments.filter(apt => 
-        apt.status === 'pending'
-      );
-
-      const confirmedAppointments = allAppointments.filter(apt => 
-        apt.status === 'confirmed'
-      );
-
-      const completedAppointments = allAppointments.filter(apt => 
-        apt.status === 'completed'
-      );
-
-      // Set appointments
-      setAppointments(allAppointments);
-
-      // Set calculated stats
-      setStats({
-        totalPatients: new Set(allAppointments.map(apt => apt.patientId?._id)).size,
-        todayAppointments: todayAppointments.length,
-        pendingAppointments: pendingAppointments.length + confirmedAppointments.length,
-        completedAppointments: completedAppointments.length
-      });
-
-      setError(''); // Clear any previous errors
-      setSuccess('Dashboard data loaded successfully');
+      setStats(stats);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      if (error.response?.status === 401) {
-        setError('Your session has expired. Please log in again.');
-      } else {
-        setError(error.response?.data?.message || 'Failed to fetch dashboard data');
-      }
-    } finally {
+      setError(error.response?.data?.message || 'Failed to fetch dashboard data');
       setLoading(false);
     }
   };
@@ -163,12 +240,6 @@ const Dashboard = () => {
   const handleSubmitPrescription = async () => {
     try {
       setError('');
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to perform this action');
-        return;
-      }
-
       if (!prescriptionNote.trim()) {
         setError('Please enter prescription details');
         return;
@@ -178,13 +249,6 @@ const Dashboard = () => {
         setError('Invalid appointment data');
         return;
       }
-
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      };
 
       // First add the prescription
       const prescriptionData = {
@@ -196,12 +260,12 @@ const Dashboard = () => {
 
       console.log('Attempting to submit prescription with data:', prescriptionData);
 
-      // Add the prescription
-      const prescriptionResponse = await axios.post('/api/prescriptions', prescriptionData, config);
+      // Add the prescription using the configured api instance
+      const prescriptionResponse = await api.post('/prescriptions', prescriptionData);
       console.log('Prescription created successfully:', prescriptionResponse.data);
 
-      // Then complete the appointment
-      await axios.patch(`/api/appointments/${selectedAppointment._id}/complete`, {}, config);
+      // Then complete the appointment using the configured api instance
+      await api.patch(`/doctors/appointments/${selectedAppointment._id}/complete`);
       console.log('Appointment marked as completed');
 
       setSuccess('Prescription added and appointment completed successfully');
@@ -215,42 +279,33 @@ const Dashboard = () => {
     }
   };
 
-  const handleUpdateAppointment = async (appointmentId, status) => {
+  const handleUpdateStatus = async (appointmentId, newStatus, prescription = null) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to perform this action');
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      await axios.put(`/api/appointments/${appointmentId}/status`, {
-        status
-      }, config);
-
-      setSuccess(`Appointment ${status} successfully`);
+      setError(null);
+      // Fix: Use the correct status update endpoint
+      const response = await api.patch(`/doctors/appointments/${appointmentId}/status`, {
+        status: newStatus,
+        prescription
+      });
+      
+      setSuccess(`Appointment ${newStatus} successfully`);
       fetchDashboardData();
     } catch (error) {
-      console.error('Error updating appointment:', error);
-      setError(error.response?.data?.message || 'Failed to update appointment');
+      console.error('Error updating appointment status:', error);
+      setError(error.response?.data?.message || 'Failed to update appointment status');
     }
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'warning';
+    switch (status?.toLowerCase()) {
       case 'confirmed':
-        return 'info';
+        return 'primary';
       case 'completed':
         return 'success';
       case 'cancelled':
         return 'error';
+      case 'pending':
+        return 'warning';
       default:
         return 'default';
     }
@@ -259,54 +314,171 @@ const Dashboard = () => {
   const filterAppointments = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Sort appointments by date in descending order (most recent first)
+    const sortedAppointments = [...appointments].sort((a, b) => 
+      new Date(b.date) - new Date(a.date)
+    );
 
     switch (activeTab) {
       case 0: // Today's appointments
-        return appointments.filter(apt => {
+        return sortedAppointments.filter(apt => {
           const aptDate = new Date(apt.date);
           aptDate.setHours(0, 0, 0, 0);
-          return aptDate.getTime() === today.getTime();
+          // Only show non-completed, non-cancelled appointments for today
+          return aptDate.getTime() === today.getTime() && 
+                 apt.status !== 'cancelled' && 
+                 apt.status !== 'completed';
         });
       case 1: // Upcoming appointments
-        return appointments.filter(apt => {
+        return sortedAppointments.filter(apt => {
           const aptDate = new Date(apt.date);
           aptDate.setHours(0, 0, 0, 0);
-          return (apt.status === 'pending' || apt.status === 'confirmed') && aptDate >= today;
+          return aptDate > today && 
+                 apt.status !== 'cancelled' && 
+                 apt.status !== 'completed';
         });
       case 2: // Past appointments
-        return appointments.filter(apt => {
+        return sortedAppointments.filter(apt => {
           const aptDate = new Date(apt.date);
           aptDate.setHours(0, 0, 0, 0);
-          return apt.status === 'completed' || aptDate < today;
+          // Show appointments that are either completed, cancelled, or from past dates
+          return aptDate < today || 
+                 apt.status === 'completed' || 
+                 apt.status === 'cancelled';
         });
       default:
-        return appointments;
+        return sortedAppointments;
     }
+  };
+
+  // Update the tab counts to show correct numbers
+  const getTodayAppointments = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return appointments.filter(apt => {
+      const aptDate = new Date(apt.date);
+      aptDate.setHours(0, 0, 0, 0);
+      return aptDate.getTime() === today.getTime() && 
+             apt.status !== 'cancelled' && 
+             apt.status !== 'completed';
+    });
+  };
+
+  const getUpcomingAppointments = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return appointments.filter(apt => {
+      const aptDate = new Date(apt.date);
+      aptDate.setHours(0, 0, 0, 0);
+      return aptDate > today && 
+             apt.status !== 'cancelled' && 
+             apt.status !== 'completed';
+    });
+  };
+
+  const getPastAppointments = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return appointments.filter(apt => {
+      const aptDate = new Date(apt.date);
+      aptDate.setHours(0, 0, 0, 0);
+      return aptDate < today || 
+             apt.status === 'completed' || 
+             apt.status === 'cancelled';
+    });
   };
 
   const handleViewPrescription = async (appointment) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to view prescriptions');
+      setError(null);
+      
+      if (!appointment?._id) {
+        setError('Invalid appointment data');
         return;
       }
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
+      console.log('Fetching prescription for appointment:', appointment._id);
+      
+      // Fix: Use the correct prescription endpoint
+      const response = await api.get(`/prescriptions/${appointment._id}`);
+      
+      if (!response.data) {
+        throw new Error('No prescription data received');
+      }
 
-      const response = await axios.get(`/api/prescriptions/appointment/${appointment._id}`, config);
+      console.log('Prescription data:', response.data);
       setSelectedPrescriptionData(response.data);
       setViewPrescriptionDialog(true);
     } catch (error) {
       console.error('Error fetching prescription:', error);
-      setError(error.response?.data?.message || 'Failed to fetch prescription');
+      const errorMessage = error.response?.data?.message || error.message;
+      setError(`Failed to fetch prescription: ${errorMessage}`);
     }
+  };
+
+  const handleCompleteAppointment = async (appointment, withPrescription = false) => {
+    try {
+      setError(null);
+      
+      const data = {
+        prescription: withPrescription ? prescriptionData : null
+      };
+
+      console.log('Completing appointment with data:', {
+        appointmentId: appointment._id,
+        data
+      });
+
+      // Fix: Use the correct complete appointment endpoint
+      const response = await api.patch(`/doctors/appointments/${appointment._id}/complete`, data);
+      
+      setSuccess('Appointment completed successfully');
+      if (withPrescription) {
+        setPrescriptionDialogOpen(false);
+        setPrescriptionData({
+          diagnosis: '',
+          medicines: [],
+          tests: [],
+          notes: '',
+          followUpDate: null
+        });
+      }
+      fetchDashboardData();
+    } catch (error) {
+      console.error('Error completing appointment:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to complete appointment';
+      setError(`Failed to complete appointment: ${errorMessage}`);
+    }
+  };
+
+  const handleAddPrescription = (appointment) => {
+    setSelectedAppointment(appointment);
+    setPrescriptionDialogOpen(true);
+  };
+
+  const formatPrescriptionData = () => {
+    return {
+      ...prescriptionData,
+      medicines: prescriptionData.medicines.map(med => ({
+        name: med.name.trim(),
+        dosage: med.dosage.trim()
+      })).filter(med => med.name && med.dosage),
+      tests: prescriptionData.tests.filter(test => test.trim()),
+      diagnosis: prescriptionData.diagnosis.trim(),
+      notes: prescriptionData.notes.trim(),
+      followUpDate: prescriptionData.followUpDate || null
+    };
+  };
+
+  const handlePrescriptionSubmit = () => {
+    if (!prescriptionData.diagnosis.trim()) {
+      setError('Diagnosis is required');
+      return;
+    }
+
+    const formattedData = formatPrescriptionData();
+    handleCompleteAppointment(selectedAppointment, true);
   };
 
   const StatCard = ({ icon: Icon, title, value, color }) => (
@@ -326,106 +498,101 @@ const Dashboard = () => {
   );
 
   const renderAppointmentsTable = () => (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ mt: 3 }}>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Patient</TableCell>
+            <TableCell>Patient Name</TableCell>
             <TableCell>Date & Time</TableCell>
             <TableCell>Type</TableCell>
-            <TableCell>Symptoms</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {filterAppointments().map((appointment) => (
-            <TableRow key={appointment._id}>
-              <TableCell>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar sx={{ mr: 2 }}>
-                    {appointment.patientId?.name?.[0] || 'P'}
-                  </Avatar>
-                  <Box>
-                    <Typography variant="subtitle2">
-                      {appointment.patientId?.name || 'Unknown Patient'}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {appointment.patientId?.email}
-                    </Typography>
-                  </Box>
-                </Box>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle2">
-                  {format(new Date(appointment.date), 'MMM dd, yyyy')}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {appointment.timeSlot}
-                </Typography>
-              </TableCell>
-              <TableCell>{appointment.type || 'Regular'}</TableCell>
-              <TableCell>{appointment.symptoms || 'Not specified'}</TableCell>
-              <TableCell>
-                <Chip 
-                  label={appointment.status} 
-                  color={getStatusColor(appointment.status)}
-                  size="small"
-                />
-              </TableCell>
-              <TableCell>
-                {appointment.status === 'pending' && (
-                  <Box>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      onClick={() => handleUpdateAppointment(appointment._id, 'confirmed')}
-                      sx={{ mr: 1 }}
-                    >
-                      Confirm
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      size="small"
-                      onClick={() => handleUpdateAppointment(appointment._id, 'cancelled')}
-                    >
-                      Cancel
-                    </Button>
-                  </Box>
-                )}
-                {appointment.status === 'confirmed' && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={() => handleOpenPrescription(appointment)}
-                  >
-                    Add Prescription & Complete
-                  </Button>
-                )}
-                {appointment.status === 'completed' && (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                    onClick={() => handleViewPrescription(appointment)}
-                  >
-                    View Prescription
-                  </Button>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-          {filterAppointments().length === 0 && (
+          {loading ? (
             <TableRow>
-              <TableCell colSpan={6} align="center">
-                <Typography variant="body1" color="textSecondary">
-                  No appointments found
-                </Typography>
-              </TableCell>
+              <TableCell colSpan={5} align="center">Loading appointments...</TableCell>
             </TableRow>
+          ) : filterAppointments().length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center">No confirmed appointments found</TableCell>
+            </TableRow>
+          ) : (
+            filterAppointments().map((appointment) => {
+              const patientName = appointment.patientId?.name || 'Unknown Patient';
+              const patientEmail = appointment.patientId?.email || 'No email';
+              const appointmentDate = new Date(appointment.date);
+              const formattedDate = format(appointmentDate, 'MMM dd, yyyy');
+              const formattedTime = appointment.timeSlot || format(appointmentDate, 'HH:mm');
+
+              return (
+                <TableRow key={appointment._id}>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Avatar 
+                        src={appointment.patientId?.profilePhoto} 
+                        alt={patientName}
+                        sx={{ width: 32, height: 32 }}
+                      >
+                        {patientName.charAt(0)}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="body2">{patientName}</Typography>
+                        <Typography variant="caption" color="textSecondary">
+                          {patientEmail}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">{formattedDate}</Typography>
+                    <Typography variant="caption" color="textSecondary">
+                      {formattedTime}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>{appointment.type || 'General Checkup'}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={appointment.status}
+                      color={getStatusColor(appointment.status)}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {appointment.status === 'confirmed' && (
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleAddPrescription(appointment)}
+                        >
+                          Complete with Prescription
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => handleCompleteAppointment(appointment, false)}
+                        >
+                          Complete without Prescription
+                        </Button>
+                      </Box>
+                    )}
+                    {appointment.status === 'completed' && (
+                      <Tooltip title="View Prescription">
+                        <IconButton
+                          color="primary"
+                          size="small"
+                          onClick={() => handleViewPrescription(appointment)}
+                        >
+                          <Assignment />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })
           )}
         </TableBody>
       </Table>
@@ -434,9 +601,9 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg">
-        <Typography>Loading...</Typography>
-      </Container>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+        <CircularProgress />
+      </Box>
     );
   }
 
@@ -469,7 +636,7 @@ const Dashboard = () => {
           <StatCard
             icon={CalendarToday}
             title="Today's Appointments"
-            value={stats.todayAppointments}
+            value={stats.confirmedAppointments}
             color="primary.main"
           />
         </Grid>
@@ -493,7 +660,7 @@ const Dashboard = () => {
           <StatCard
             icon={Assignment}
             title="Total Patients"
-            value={stats.totalPatients}
+            value={stats.totalAppointments}
             color="info.main"
           />
         </Grid>
@@ -502,9 +669,21 @@ const Dashboard = () => {
       <Paper sx={{ p: 3 }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
           <Tabs value={activeTab} onChange={handleTabChange}>
-            <Tab label="Today's Appointments" />
-            <Tab label="Upcoming Appointments" />
-            <Tab label="Past Appointments" />
+            <Tab 
+              label={`Today (${getTodayAppointments().length})`}
+              icon={<CalendarToday />}
+              iconPosition="start"
+            />
+            <Tab 
+              label={`Upcoming (${getUpcomingAppointments().length})`}
+              icon={<AccessTime />}
+              iconPosition="start"
+            />
+            <Tab 
+              label={`Past (${getPastAppointments().length})`}
+              icon={<Assignment />}
+              iconPosition="start"
+            />
           </Tabs>
         </Box>
 
@@ -633,6 +812,111 @@ const Dashboard = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setViewPrescriptionDialog(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog 
+        open={prescriptionDialogOpen} 
+        onClose={() => setPrescriptionDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Add Prescription</DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
+              label="Diagnosis"
+              fullWidth
+              multiline
+              rows={2}
+              value={prescriptionData.diagnosis}
+              onChange={(e) => setPrescriptionData({ ...prescriptionData, diagnosis: e.target.value })}
+            />
+            
+            {/* Medicines Section */}
+            <Typography variant="subtitle1">Medicines</Typography>
+            {prescriptionData.medicines.map((medicine, index) => (
+              <Box key={index} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <TextField
+                  label="Name"
+                  value={medicine.name}
+                  onChange={(e) => {
+                    const newMedicines = [...prescriptionData.medicines];
+                    newMedicines[index].name = e.target.value;
+                    setPrescriptionData({ ...prescriptionData, medicines: newMedicines });
+                  }}
+                />
+                <TextField
+                  label="Dosage"
+                  value={medicine.dosage}
+                  onChange={(e) => {
+                    const newMedicines = [...prescriptionData.medicines];
+                    newMedicines[index].dosage = e.target.value;
+                    setPrescriptionData({ ...prescriptionData, medicines: newMedicines });
+                  }}
+                />
+                <IconButton 
+                  color="error"
+                  onClick={() => {
+                    const newMedicines = prescriptionData.medicines.filter((_, i) => i !== index);
+                    setPrescriptionData({ ...prescriptionData, medicines: newMedicines });
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            ))}
+            <Button
+              variant="outlined"
+              onClick={() => setPrescriptionData({
+                ...prescriptionData,
+                medicines: [...prescriptionData.medicines, { name: '', dosage: '' }]
+              })}
+            >
+              Add Medicine
+            </Button>
+
+            {/* Tests Section */}
+            <TextField
+              label="Tests"
+              fullWidth
+              multiline
+              rows={2}
+              value={prescriptionData.tests.join('\n')}
+              onChange={(e) => setPrescriptionData({
+                ...prescriptionData,
+                tests: e.target.value.split('\n').filter(test => test.trim())
+              })}
+              placeholder="Enter tests (one per line)"
+            />
+
+            <TextField
+              label="Notes"
+              fullWidth
+              multiline
+              rows={3}
+              value={prescriptionData.notes}
+              onChange={(e) => setPrescriptionData({ ...prescriptionData, notes: e.target.value })}
+            />
+
+            <TextField
+              label="Follow-up Date"
+              type="date"
+              value={prescriptionData.followUpDate || ''}
+              onChange={(e) => setPrescriptionData({ ...prescriptionData, followUpDate: e.target.value })}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPrescriptionDialogOpen(false)}>Cancel</Button>
+          <Button 
+            variant="contained" 
+            color="primary"
+            onClick={handlePrescriptionSubmit}
+          >
+            Complete with Prescription
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>

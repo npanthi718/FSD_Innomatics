@@ -84,14 +84,19 @@ router.get('/', auth, async (req, res) => {
                 .populate({
                     path: 'doctorId',
                     populate: [
-                        { path: 'userId', select: 'name email' },
-                        { path: 'department', select: 'name' }
+                        { 
+                            path: 'userId', 
+                            select: 'name email profilePhoto' 
+                        },
+                        { 
+                            path: 'department',
+                            select: 'name'
+                        }
                     ]
                 })
-                .populate('patientId', 'name email')
-                .sort({ date: 1 });
+                .populate('patientId', 'name email profilePhoto')
+                .sort({ date: -1 }); // Sort by date descending
         } else if (req.user.role === 'doctor') {
-            // First get the doctor document
             const doctor = await Doctor.findOne({ userId: req.user._id });
             if (!doctor) {
                 return res.status(404).json({ message: 'Doctor profile not found' });
@@ -101,23 +106,23 @@ router.get('/', auth, async (req, res) => {
                 .populate({
                     path: 'doctorId',
                     populate: [
-                        { path: 'userId', select: 'name email' },
-                        { path: 'department', select: 'name' }
+                        { 
+                            path: 'userId', 
+                            select: 'name email profilePhoto' 
+                        },
+                        { 
+                            path: 'department',
+                            select: 'name'
+                        }
                     ]
                 })
-                .populate('patientId', 'name email')
-                .sort({ date: 1 });
-
-            // Log for debugging
-            console.log('Doctor ID:', doctor._id);
-            console.log('Found appointments:', appointments.length);
+                .populate('patientId', 'name email profilePhoto')
+                .sort({ date: -1 }); // Sort by date descending
         } else {
             return res.status(403).json({ message: 'Not authorized to view appointments' });
         }
 
-        // Log the response for debugging
-        console.log('Sending appointments:', appointments.length);
-        res.json({ appointments });
+        res.json(appointments);
     } catch (err) {
         console.error('Error fetching appointments:', err);
         res.status(500).json({ message: 'Error fetching appointments', error: err.message });

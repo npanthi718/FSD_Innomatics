@@ -5,6 +5,7 @@ const Doctor = require('../models/doctor.model');
 const User = require('../models/user.model');
 const Appointment = require('../models/appointment.model');
 const { auth, authorize } = require('../middleware/auth');
+const Prescription = require('../models/prescription.model');
 
 // Validation middleware
 const validateDoctorUpdate = [
@@ -36,6 +37,111 @@ router.get('/', async (req, res) => {
     } catch (error) {
         console.error('Error fetching doctors:', error);
         res.status(500).json({ message: 'Error fetching doctors', error: error.message });
+    }
+});
+
+// Get doctor's appointments
+router.get('/appointments', auth, authorize('doctor'), async (req, res) => {
+    try {
+        console.log('Fetching appointments for doctor:', req.user._id);
+        
+        const doctor = await Doctor.findOne({ userId: req.user._id });
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor profile not found' });
+        }
+
+        const appointments = await Appointment.find({ doctorId: doctor._id })
+            .populate({
+                path: 'patientId',
+                select: 'name email phoneNumber profilePhoto'
+            })
+            .populate({
+                path: 'doctorId',
+                select: 'specialization department',
+                populate: {
+                    path: 'department',
+                    select: 'name'
+                }
+            })
+            .sort({ date: -1 });
+
+        console.log(`Found ${appointments.length} appointments for doctor ${doctor._id}`);
+        res.json(appointments);
+    } catch (error) {
+        console.error('Error fetching doctor appointments:', error);
+        res.status(500).json({ 
+            message: 'Error fetching appointments', 
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+});
+
+// Update doctor availability
+router.put('/availability', auth, authorize('doctor'), async (req, res) => {
+    try {
+        const { availability } = req.body;
+        const doctor = await Doctor.findOne({ userId: req.user._id });
+
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor profile not found' });
+        }
+
+        doctor.availability = availability;
+        await doctor.save();
+
+        res.json({ message: 'Availability updated successfully', availability: doctor.availability });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Update appointment status
+router.patch('/appointments/:id/status', auth, authorize('doctor'), async (req, res) => {
+    try {
+        const { status } = req.body;
+        const doctor = await Doctor.findOne({ userId: req.user._id });
+        const appointment = await Appointment.findOne({
+            _id: req.params.id,
+            doctorId: doctor._id
+        });
+
+        if (!appointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+
+        appointment.status = status;
+        await appointment.save();
+
+        res.json({ message: 'Appointment status updated successfully', appointment });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Get doctor statistics
+router.get('/stats/overview', auth, authorize('doctor'), async (req, res) => {
+    try {
+        const doctor = await Doctor.findOne({ userId: req.user._id });
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor profile not found' });
+        }
+
+        const stats = await Promise.all([
+            Appointment.countDocuments({ doctorId: doctor._id, status: 'pending' }),
+            Appointment.countDocuments({ doctorId: doctor._id, status: 'confirmed' }),
+            Appointment.countDocuments({ doctorId: doctor._id, status: 'completed' }),
+            Appointment.countDocuments({ doctorId: doctor._id, status: 'cancelled' })
+        ]);
+
+        res.json({
+            pendingAppointments: stats[0],
+            confirmedAppointments: stats[1],
+            completedAppointments: stats[2],
+            cancelledAppointments: stats[3]
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 
@@ -105,92 +211,6 @@ router.put('/:id/profile', auth, authorize('admin'), async (req, res) => {
     }
 });
 
-// Update doctor availability
-router.put('/availability', auth, authorize('doctor'), async (req, res) => {
-    try {
-        const { availability } = req.body;
-        const doctor = await Doctor.findOne({ userId: req.user._id });
-
-        if (!doctor) {
-            return res.status(404).json({ message: 'Doctor profile not found' });
-        }
-
-        doctor.availability = availability;
-        await doctor.save();
-
-        res.json({ message: 'Availability updated successfully', availability: doctor.availability });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-});
-
-// Get doctor's appointments
-router.get('/appointments', auth, authorize('doctor'), async (req, res) => {
-    try {
-        const doctor = await Doctor.findOne({ userId: req.user._id });
-        if (!doctor) {
-            return res.status(404).json({ message: 'Doctor profile not found' });
-        }
-
-        const appointments = await Appointment.find({ doctorId: doctor._id })
-            .populate('patientId', 'name email phone')
-            .sort({ date: 1 });
-
-        res.json(appointments);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-});
-
-// Update appointment status
-router.patch('/appointments/:id/status', auth, authorize('doctor'), async (req, res) => {
-    try {
-        const { status } = req.body;
-        const doctor = await Doctor.findOne({ userId: req.user._id });
-        const appointment = await Appointment.findOne({
-            _id: req.params.id,
-            doctorId: doctor._id
-        });
-
-        if (!appointment) {
-            return res.status(404).json({ message: 'Appointment not found' });
-        }
-
-        appointment.status = status;
-        await appointment.save();
-
-        res.json({ message: 'Appointment status updated successfully', appointment });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-});
-
-// Get doctor statistics
-router.get('/stats/overview', auth, authorize('doctor'), async (req, res) => {
-    try {
-        const doctor = await Doctor.findOne({ userId: req.user._id });
-        if (!doctor) {
-            return res.status(404).json({ message: 'Doctor profile not found' });
-        }
-
-        const stats = await Promise.all([
-            Appointment.countDocuments({ doctorId: doctor._id, status: 'pending' }),
-            Appointment.countDocuments({ doctorId: doctor._id, status: 'confirmed' }),
-            Appointment.countDocuments({ doctorId: doctor._id, status: 'completed' }),
-            Appointment.countDocuments({ doctorId: doctor._id, status: 'cancelled' })
-        ]);
-
-        res.json({
-            pendingAppointments: stats[0],
-            confirmedAppointments: stats[1],
-            completedAppointments: stats[2],
-            cancelledAppointments: stats[3]
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-});
-
 // Approve/reject doctor (admin only)
 router.patch('/:id/approval', auth, authorize('admin'), async (req, res) => {
     try {
@@ -248,6 +268,64 @@ router.delete('/:id', auth, authorize('admin'), async (req, res) => {
     } catch (error) {
         console.error('Error deleting doctor:', error);
         res.status(500).json({ message: 'Error deleting doctor', error: error.message });
+    }
+});
+
+// Complete appointment with optional prescription
+router.patch('/appointments/:id/complete', auth, authorize('doctor'), async (req, res) => {
+    try {
+        const doctor = await Doctor.findOne({ userId: req.user._id });
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor profile not found' });
+        }
+
+        const appointment = await Appointment.findOne({
+            _id: req.params.id,
+            doctorId: doctor._id,
+            status: 'confirmed'
+        });
+
+        if (!appointment) {
+            return res.status(404).json({ message: 'Appointment not found or not in confirmed status' });
+        }
+
+        // Update appointment status
+        appointment.status = 'completed';
+        await appointment.save();
+
+        // Create prescription if provided
+        let prescription = null;
+        if (req.body.prescription) {
+            const { diagnosis, medicines, tests, notes, followUpDate } = req.body.prescription;
+            
+            prescription = new Prescription({
+                appointmentId: appointment._id,
+                patientId: appointment.patientId,
+                doctorId: doctor._id,
+                diagnosis,
+                medicines: medicines || [],
+                tests: tests || [],
+                notes: notes || '',
+                followUpDate
+            });
+
+            await prescription.save();
+        }
+
+        // Populate the appointment data
+        await appointment.populate([
+            { path: 'doctorId', populate: { path: 'userId', select: 'name email' } },
+            { path: 'patientId', select: 'name email' }
+        ]);
+
+        res.json({ 
+            message: 'Appointment completed successfully', 
+            appointment,
+            prescription 
+        });
+    } catch (error) {
+        console.error('Error completing appointment:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 

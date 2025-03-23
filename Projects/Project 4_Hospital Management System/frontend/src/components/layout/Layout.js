@@ -1,9 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-const Layout = ({ children }) => {
+const Layout = () => {
   return (
     <Box
       sx={{
@@ -21,7 +22,7 @@ const Layout = ({ children }) => {
           px: { xs: 2, sm: 3 },
         }}
       >
-        {children}
+        <Outlet />
       </Box>
       <Footer />
     </Box>

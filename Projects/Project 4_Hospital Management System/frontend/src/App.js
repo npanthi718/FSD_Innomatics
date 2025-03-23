@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { createBrowserRouter } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -19,6 +20,8 @@ import AdminDashboard from './pages/admin/Dashboard';
 import DoctorDashboard from './pages/doctor/Dashboard';
 import PatientDashboard from './pages/patient/Dashboard';
 import NotFound from './pages/NotFound';
+import AboutUs from './pages/AboutUs';
+import ContactUs from './pages/ContactUs';
 
 // Create theme
 const theme = createTheme({
@@ -71,99 +74,120 @@ const theme = createTheme({
   },
 });
 
-const App = () => {
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        path: '/',
+        element: <Home />,
+      },
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/register',
+        element: <Register />,
+      },
+      {
+        path: '/doctors',
+        element: <Doctors />,
+      },
+      {
+        path: '/departments',
+        element: <Departments />,
+      },
+      {
+        path: '/aboutus',
+        element: <AboutUs />,
+      },
+      {
+        path: '/contact',
+        element: <ContactUs />,
+      },
+      {
+        path: '/appointments',
+        element: (
+          <ProtectedRoute roles={['patient']}>
+            <Appointments />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/prescriptions',
+        element: (
+          <ProtectedRoute roles={['patient']}>
+            <Prescriptions />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/patient/dashboard',
+        element: (
+          <ProtectedRoute roles={['patient']}>
+            <PatientDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/patient/profile',
+        element: (
+          <ProtectedRoute roles={['patient']}>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/doctor/dashboard',
+        element: (
+          <ProtectedRoute roles={['doctor']}>
+            <DoctorDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/doctor/profile',
+        element: (
+          <ProtectedRoute roles={['doctor']}>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/admin/dashboard',
+        element: (
+          <ProtectedRoute roles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/admin/profile',
+        element: (
+          <ProtectedRoute roles={['admin']}>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '*',
+        element: <NotFound />,
+      },
+    ],
+  },
+]);
+
+function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AuthProvider>
-          <Layout>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/doctors" element={<Doctors />} />
-              <Route path="/departments" element={<Departments />} />
-
-              {/* Protected Patient routes */}
-              <Route
-                path="/patient/dashboard"
-                element={
-                  <ProtectedRoute roles={['patient']}>
-                    <PatientDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/patient/profile"
-                element={
-                  <ProtectedRoute roles={['patient']}>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/appointments"
-                element={
-                  <ProtectedRoute roles={['patient']}>
-                    <Appointments />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/prescriptions"
-                element={
-                  <ProtectedRoute roles={['patient']}>
-                    <Prescriptions />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Protected Doctor routes */}
-              <Route
-                path="/doctor/dashboard"
-                element={
-                  <ProtectedRoute roles={['doctor']}>
-                    <DoctorDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/doctor/profile"
-                element={
-                  <ProtectedRoute roles={['doctor']}>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Protected Admin routes */}
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <ProtectedRoute roles={['admin']}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/profile"
-                element={
-                  <ProtectedRoute roles={['admin']}>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* 404 route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </AuthProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </ThemeProvider>
   );
-};
+}
 
 export default App; 

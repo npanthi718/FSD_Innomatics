@@ -30,6 +30,7 @@ import {
   FormControl,
   InputLabel,
   Chip,
+  CircularProgress,
 } from '@mui/material';
 import {
   LocalHospital as HospitalIcon,
@@ -46,19 +47,84 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+
+// Create an axios instance with base URL and auth header
+const api = axios.create({
+  baseURL: 'http://localhost:5000',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  withCredentials: false // Changed from true since we're using token-based auth
+});
+
+// Add request interceptor to add token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log('Request config:', config);
+    return config;
+  },
+  (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle errors
+api.interceptors.response.use(
+  (response) => {
+    console.log('Response:', response);
+    return response;
+  },
+  (error) => {
+    console.error('API Error:', error);
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+const getStatusColor = (status) => {
+  switch (status?.toLowerCase()) {
+    case 'scheduled':
+      return 'primary';
+    case 'completed':
+      return 'success';
+    case 'cancelled':
+      return 'error';
+    case 'pending':
+      return 'warning';
+    default:
+      return 'default';
+  }
+};
 
 const AdminDashboard = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
   const [stats, setStats] = useState({
     totalDoctors: 0,
     totalPatients: 0,
     totalAppointments: 0,
-    pendingApprovals: 0,
+    completedAppointments: 0,
+    pendingAppointments: 0,
+    cancelledAppointments: 0
   });
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
-  const [appointments, setAppointments] = useState([]);
+  const [appointments, setAppointments] = useState({
+    all: [],
+    today: [],
+    upcoming: [],
+    past: []
+  });
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -73,6 +139,67 @@ const AdminDashboard = () => {
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [editPatient, setEditPatient] = useState(null);
   const [editPatientDialogOpen, setEditPatientDialogOpen] = useState(false);
+  const [openCancelDialog, setOpenCancelDialog] = useState(false);
+  const [cancellationReason, setCancellationReason] = useState('');
+
+  // Add authentication check
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    if (user.role !== 'admin') {
+      logout();
+      navigate('/unauthorized');
+      return;
+    }
+
+    // Initial data fetch
+    fetchDashboardData();
+
+    // Set up interval for real-time updates
+    const interval = setInterval(fetchDashboardData, 30000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, [user, navigate, logout]);
+
+  // Session timeout handling
+  useEffect(() => {
+    let inactivityTimer;
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        console.log('Session timeout - logging out');
+        logout();
+        navigate('/');
+      }, SESSION_TIMEOUT);
+    };
+
+    // Reset timer on user activity
+    const handleUserActivity = () => {
+      resetTimer();
+    };
+
+    // Add event listeners for user activity
+    window.addEventListener('mousemove', handleUserActivity);
+    window.addEventListener('keydown', handleUserActivity);
+    window.addEventListener('click', handleUserActivity);
+
+    // Initial timer setup
+    resetTimer();
+
+    // Cleanup
+    return () => {
+      clearTimeout(inactivityTimer);
+      window.removeEventListener('mousemove', handleUserActivity);
+      window.removeEventListener('keydown', handleUserActivity);
+      window.removeEventListener('click', handleUserActivity);
+    };
+  }, [logout, navigate]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -83,42 +210,69 @@ const AdminDashboard = () => {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to access the admin dashboard');
-        setLoading(false);
-        return;
+      // Get appointments first with error handling
+      const appointmentsRes = await api.get('/api/admin/appointments');
+      console.log('Appointments response:', appointmentsRes.data);
+
+      if (!appointmentsRes.data) {
+        throw new Error('No data received from appointments endpoint');
       }
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const appointmentsData = appointmentsRes.data.appointments || [];
+      const categorizedAppointments = appointmentsRes.data.categorizedAppointments || {
+        today: [],
+        upcoming: [],
+        past: []
       };
+      const statsFromAppointments = appointmentsRes.data.stats || {};
 
-      const [statsRes, doctorsRes, patientsRes, appointmentsRes, departmentsRes] = await Promise.all([
-        axios.get('/api/admin/stats', config),
-        axios.get('/api/admin/doctors', config),
-        axios.get('/api/admin/patients', config),
-        axios.get('/api/admin/appointments', config),
-        axios.get('/api/admin/departments', config)
+      // Get other data with proper error handling
+      const [doctorsRes, patientsRes, departmentsRes] = await Promise.all([
+        api.get('/api/admin/doctors'),
+        api.get('/api/admin/patients'),
+        api.get('/api/admin/departments')
       ]);
 
+      // Update stats with null checks
       setStats({
-        totalDoctors: statsRes.data.totalDoctors,
-        totalPatients: statsRes.data.totalPatients,
-        totalAppointments: appointmentsRes.data.stats.total,
-        pendingApprovals: statsRes.data.pendingApprovals
+        totalDoctors: doctorsRes.data?.length || 0,
+        totalPatients: patientsRes.data?.length || 0,
+        totalAppointments: statsFromAppointments.totalAppointments || 0,
+        completedAppointments: statsFromAppointments.completedAppointments || 0,
+        pendingAppointments: statsFromAppointments.pendingAppointments || 0,
+        cancelledAppointments: statsFromAppointments.cancelledAppointments || 0
       });
       
-      setDoctors(doctorsRes.data);
-      setPatients(patientsRes.data);
-      setAppointments(appointmentsRes.data.appointments);
-      setDepartments(departmentsRes.data);
-      setSuccess('Data loaded successfully');
+      // Update state with data and null checks
+      setDoctors(Array.isArray(doctorsRes.data) ? doctorsRes.data : []);
+      setPatients(Array.isArray(patientsRes.data) ? patientsRes.data : []);
+      setAppointments({
+        all: appointmentsData,
+        today: categorizedAppointments.today || [],
+        upcoming: categorizedAppointments.upcoming || [],
+        past: categorizedAppointments.past || []
+      });
+      setDepartments(Array.isArray(departmentsRes.data) ? departmentsRes.data : []);
+
+      // Clear any previous error
+      setError(null);
+      
+      // Show success message briefly
+      setSuccess('Data updated successfully');
+      setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error('Dashboard data fetch error:', err);
-      setError(err.response?.data?.message || 'Failed to fetch dashboard data');
+      setError(err.response?.data?.message || err.message || 'Failed to fetch dashboard data');
+      // Initialize empty arrays on error
+      setDoctors([]);
+      setPatients([]);
+      setAppointments({
+        all: [],
+        today: [],
+        upcoming: [],
+        past: []
+      });
+      setDepartments([]);
     } finally {
       setLoading(false);
     }
@@ -130,54 +284,23 @@ const AdminDashboard = () => {
 
   const handleStatusChange = async (appointmentId, newStatus) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to perform this action');
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      await axios.put(`/api/admin/appointments/${appointmentId}/status`, {
+      await api.put(`/api/admin/appointments/${appointmentId}/status`, {
         status: newStatus
-      }, config);
+      });
       
       setSuccess('Appointment status updated successfully');
       fetchDashboardData();
     } catch (err) {
       console.error('Status update error:', err);
-      if (err.response?.status === 401) {
-        setError('Your session has expired. Please log in again.');
-    } else {
-        setError(
-          err.response?.data?.message || 
-          'Failed to update appointment status. Please try again.'
-        );
-      }
+      setError(err.response?.data?.message || 'Failed to update appointment status');
     }
   };
 
   const handleDoctorStatusChange = async (doctorId, newStatus) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to perform this action');
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      await axios.patch(`/api/doctors/${doctorId}/approval`, {
+      await api.patch(`/api/doctors/${doctorId}/approval`, {
         isApproved: newStatus === 'active'
-      }, config);
+      });
       
       setSuccess(`Doctor status updated to ${newStatus}`);
       fetchDashboardData();
@@ -189,24 +312,12 @@ const AdminDashboard = () => {
 
   const handleActivateAllDoctors = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to perform this action');
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
       // Update all doctors to active status
       await Promise.all(
         doctors.map(doctor => 
-          axios.patch(`/api/doctors/${doctor._id}/approval`, {
+          api.patch(`/api/doctors/${doctor._id}/approval`, {
             isApproved: true
-          }, config)
+          })
         )
       );
 
@@ -229,19 +340,7 @@ const AdminDashboard = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to perform this action');
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      await axios.delete(`/api/doctors/${doctorId}`, config);
+      await api.delete(`/api/doctors/${doctorId}`);
       setSuccess('Doctor deleted successfully');
       fetchDashboardData();
     } catch (err) {
@@ -252,18 +351,6 @@ const AdminDashboard = () => {
 
   const handleSaveDoctor = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to perform this action');
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
       // Format the data to match backend expectations
       const doctorData = {
         specialization: editDoctor.specialization,
@@ -275,7 +362,7 @@ const AdminDashboard = () => {
         }
       };
 
-      await axios.put(`/api/doctors/${editDoctor._id}/profile`, doctorData, config);
+      await api.put(`/api/doctors/${editDoctor._id}/profile`, doctorData);
       setSuccess('Doctor information updated successfully');
       setEditDialogOpen(false);
       setEditDoctor(null);
@@ -308,26 +395,14 @@ const AdminDashboard = () => {
 
   const handleSavePatient = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to perform this action');
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      await axios.put(`/api/patients/${editPatient._id}`, {
+      await api.put(`/api/patients/${editPatient._id}`, {
         name: editPatient.name,
         email: editPatient.email,
         phone: editPatient.phone,
         age: editPatient.age,
         gender: editPatient.gender,
         bloodGroup: editPatient.bloodGroup
-      }, config);
+      });
 
       setSuccess('Patient information updated successfully');
       setEditPatientDialogOpen(false);
@@ -341,23 +416,10 @@ const AdminDashboard = () => {
 
   const handleViewPatientHistory = async (patientId) => {
     try {
-      setLoading(true);
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to view history');
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
       // Fetch appointments and prescriptions for this patient
       const [appointmentsRes, prescriptionsRes] = await Promise.all([
-        axios.get(`/api/appointments/patient/${patientId}`, config),
-        axios.get(`/api/prescriptions/patient/${patientId}`, config)
+        api.get(`/api/appointments/patient/${patientId}`),
+        api.get(`/api/prescriptions/patient/${patientId}`)
       ]);
 
       setSelectedPatientHistory({
@@ -368,14 +430,62 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error('Error fetching patient history:', error);
       setError(error.response?.data?.message || 'Failed to fetch patient history');
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleViewPrescription = (prescription) => {
     setSelectedPrescription(prescription);
     setPrescriptionDialogOpen(true);
+  };
+
+  const handleConfirmAppointment = async (appointmentId) => {
+    try {
+      setLoading(true);
+      await api.patch(`/api/admin/appointments/${appointmentId}/status`, {
+        status: 'confirmed'
+      });
+      setSuccess('Appointment confirmed successfully');
+      // Fetch updated data immediately
+      await fetchDashboardData();
+    } catch (error) {
+      console.error('Error confirming appointment:', error);
+      setError('Failed to confirm appointment: ' + (error.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOpenCancelDialog = (appointment) => {
+    setSelectedAppointment(appointment);
+    setOpenCancelDialog(true);
+  };
+
+  const handleCloseCancelDialog = () => {
+    setOpenCancelDialog(false);
+    setSelectedAppointment(null);
+    setCancellationReason('');
+  };
+
+  const handleCancelAppointment = async () => {
+    try {
+      if (!cancellationReason.trim()) {
+        setError('Please provide a reason for cancellation');
+        return;
+      }
+
+      await api.patch(`/api/admin/appointments/${selectedAppointment._id}/status`, {
+        status: 'cancelled',
+        cancellationReason: cancellationReason
+      });
+
+      setSuccess('Appointment cancelled successfully');
+      handleCloseCancelDialog();
+      // Fetch updated data immediately
+      await fetchDashboardData();
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
+      setError('Failed to cancel appointment');
+    }
   };
 
   const renderStats = () => (
@@ -424,10 +534,10 @@ const AdminDashboard = () => {
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <Assignment color="warning" sx={{ mr: 1 }} />
-              <Typography variant="h6">Pending Approvals</Typography>
+              <Typography variant="h6">Completed Appointments</Typography>
             </Box>
             <Typography variant="h3" color="warning.main">
-              {stats.pendingApprovals}
+              {stats.completedAppointments}
             </Typography>
           </CardContent>
         </Card>
@@ -691,7 +801,7 @@ const AdminDashboard = () => {
   );
 
   const renderAppointments = () => (
-    <TableContainer component={Paper}>
+    <Box>
       <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h6">Appointments List</Typography>
         <Button
@@ -702,121 +812,147 @@ const AdminDashboard = () => {
           Refresh
         </Button>
       </Box>
-      <Table>
-        <TableHead>
+
+      {/* Today's Appointments */}
+      <Typography variant="h6" sx={{ mt: 3, mb: 2 }}>Today's Appointments</Typography>
+      <TableContainer component={Paper}>
+        {renderAppointmentTable(appointments.today)}
+      </TableContainer>
+
+      {/* Upcoming Appointments */}
+      <Typography variant="h6" sx={{ mt: 3, mb: 2 }}>Upcoming Appointments</Typography>
+      <TableContainer component={Paper}>
+        {renderAppointmentTable(appointments.upcoming)}
+      </TableContainer>
+
+      {/* Past Appointments */}
+      <Typography variant="h6" sx={{ mt: 3, mb: 2 }}>Past Appointments</Typography>
+      <TableContainer component={Paper}>
+        {renderAppointmentTable(appointments.past)}
+      </TableContainer>
+    </Box>
+  );
+
+  const renderAppointmentTable = (appointmentsList) => (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Patient</TableCell>
+          <TableCell>Doctor</TableCell>
+          <TableCell>Department</TableCell>
+          <TableCell>Date</TableCell>
+          <TableCell>Time</TableCell>
+          <TableCell>Status</TableCell>
+          <TableCell>Actions</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {loading ? (
           <TableRow>
-            <TableCell>Patient</TableCell>
-            <TableCell>Doctor</TableCell>
-            <TableCell>Department</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Time</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell colSpan={7} align="center">Loading appointments...</TableCell>
           </TableRow>
-        </TableHead>
-        <TableBody>
-          {appointments && appointments.length > 0 ? (
-            appointments.map((appointment) => (
-              <TableRow key={appointment?._id || 'temp-key'}>
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar sx={{ mr: 2 }}>{appointment?.patientId?.name?.[0] || 'P'}</Avatar>
-                    <Box>
-                      <Typography variant="subtitle2">
-                        {appointment?.patientId?.name || 'Unknown Patient'}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {appointment?.patientId?.email}
-                      </Typography>
-                    </Box>
+        ) : !Array.isArray(appointmentsList) || appointmentsList.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={7} align="center">No appointments found</TableCell>
+          </TableRow>
+        ) : (
+          appointmentsList.map((appointment) => (
+            <TableRow key={appointment?._id || `temp-${Math.random()}`}>
+              <TableCell>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar sx={{ mr: 2 }}>
+                    {appointment?.patientId?.name?.[0] || 'P'}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle2">
+                      {appointment?.patientId?.name || 'Unknown Patient'}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {appointment?.patientId?.email || 'No email'}
+                    </Typography>
                   </Box>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar sx={{ mr: 2 }}>{appointment?.doctorId?.userId?.name?.[0] || 'D'}</Avatar>
-                    <Box>
-                      <Typography variant="subtitle2">
-                        {appointment?.doctorId?.userId?.name || 'Unknown Doctor'}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {appointment?.doctorId?.userId?.email}
-                      </Typography>
-                    </Box>
+                </Box>
+              </TableCell>
+              <TableCell>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar sx={{ mr: 2 }}>
+                    {appointment?.doctorId?.name?.[0] || 'D'}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle2">
+                      {appointment?.doctorId?.name || 'Unknown Doctor'}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {appointment?.doctorId?.email || 'No email'}
+                    </Typography>
                   </Box>
-                </TableCell>
-                <TableCell>{appointment?.doctorId?.department?.name || 'N/A'}</TableCell>
-                <TableCell>
-                  {appointment?.date ? format(new Date(appointment.date), 'MMM dd, yyyy') : 'N/A'}
-                </TableCell>
-                <TableCell>{appointment?.timeSlot || 'N/A'}</TableCell>
-                <TableCell>
-                  <FormControl size="small" fullWidth>
-                    <Select
-                      value={appointment?.status || 'pending'}
-                      onChange={(e) => handleStatusChange(appointment._id, e.target.value)}
+                </Box>
+              </TableCell>
+              <TableCell>
+                {appointment?.doctorId?.department?.name || 'N/A'}
+              </TableCell>
+              <TableCell>
+                {appointment?.date ? format(new Date(appointment.date), 'MMM dd, yyyy') : 'N/A'}
+              </TableCell>
+              <TableCell>{appointment?.timeSlot || 'N/A'}</TableCell>
+              <TableCell>
+                <Chip
+                  label={appointment?.status || 'pending'}
+                  color={getStatusColor(appointment?.status)}
+                  size="small"
+                />
+                {appointment?.cancellationReason && (
+                  <Typography variant="caption" color="error" display="block">
+                    Reason: {appointment.cancellationReason}
+                  </Typography>
+                )}
+              </TableCell>
+              <TableCell>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Tooltip title="View Details">
+                    <IconButton 
+                      size="small" 
+                      color="primary"
+                      onClick={() => handleViewAppointment(appointment)}
                     >
-                      <MenuItem value="pending">Pending</MenuItem>
-                      <MenuItem value="confirmed">Confirmed</MenuItem>
-                      <MenuItem value="completed">Completed</MenuItem>
-                      <MenuItem value="cancelled">Cancelled</MenuItem>
-                    </Select>
-                  </FormControl>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Tooltip title="View Details">
-                      <IconButton 
-                        size="small" 
-                        color="primary"
-                        onClick={() => handleViewAppointment(appointment)}
-                      >
-                        <Assignment />
-                      </IconButton>
-                    </Tooltip>
-                    {appointment?.status === 'pending' && (
-                      <>
-                        <Tooltip title="Confirm">
-                          <IconButton 
-                            size="small" 
-                            color="success"
-                            onClick={() => handleStatusChange(appointment._id, 'confirmed')}
-                          >
-                            <CheckCircleIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Cancel">
-                          <IconButton 
-                            size="small" 
-                            color="error"
-                            onClick={() => handleStatusChange(appointment._id, 'cancelled')}
-                          >
-                            <CancelIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    )}
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7} align="center">
-                <Typography variant="body1" color="textSecondary">
-                  No appointments found
-                </Typography>
+                      <Assignment />
+                    </IconButton>
+                  </Tooltip>
+                  {appointment?.status === 'pending' && (
+                    <>
+                      <Tooltip title="Confirm Appointment">
+                        <IconButton 
+                          size="small" 
+                          color="success"
+                          onClick={() => handleConfirmAppointment(appointment._id)}
+                        >
+                          <CheckCircleIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Cancel Appointment">
+                        <IconButton 
+                          size="small" 
+                          color="error"
+                          onClick={() => handleOpenCancelDialog(appointment)}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </>
+                  )}
+                </Box>
               </TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          ))
+        )}
+      </TableBody>
+    </Table>
   );
 
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-        <Typography>Loading...</Typography>
+        <CircularProgress />
       </Box>
     );
   }
@@ -828,12 +964,12 @@ const AdminDashboard = () => {
           Admin Dashboard
         </Typography>
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
             {error}
           </Alert>
         )}
         {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>
+          <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess(null)}>
             {success}
           </Alert>
         )}
@@ -898,30 +1034,6 @@ const AdminDashboard = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAppointmentDialog}>Close</Button>
-          {selectedAppointment?.status === 'pending' && (
-            <>
-              <Button 
-                onClick={() => {
-                  handleStatusChange(selectedAppointment._id, 'confirmed');
-                  handleCloseAppointmentDialog();
-                }}
-                color="success"
-                variant="contained"
-              >
-                Confirm Appointment
-              </Button>
-              <Button 
-                onClick={() => {
-                  handleStatusChange(selectedAppointment._id, 'cancelled');
-                  handleCloseAppointmentDialog();
-                }}
-                color="error"
-                variant="contained"
-              >
-                Cancel Appointment
-              </Button>
-            </>
-          )}
         </DialogActions>
       </Dialog>
 
@@ -1158,6 +1270,47 @@ const AdminDashboard = () => {
           <Button onClick={() => setEditPatientDialogOpen(false)}>Cancel</Button>
           <Button onClick={handleSavePatient} variant="contained" color="primary">
             Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openCancelDialog}
+        onClose={handleCloseCancelDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6">Cancel Appointment</Typography>
+            <IconButton onClick={handleCloseCancelDialog}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Typography gutterBottom>
+            Please provide a reason for cancelling this appointment:
+          </Typography>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            value={cancellationReason}
+            onChange={(e) => setCancellationReason(e.target.value)}
+            placeholder="Enter cancellation reason..."
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCancelDialog}>Cancel</Button>
+          <Button
+            onClick={handleCancelAppointment}
+            variant="contained"
+            color="error"
+            disabled={!cancellationReason.trim()}
+          >
+            Confirm Cancellation
           </Button>
         </DialogActions>
       </Dialog>

@@ -7,33 +7,43 @@ const auth = async (req, res, next) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
 
         if (!token) {
-            return res.status(401).json({ message: 'No authentication token, access denied' });
+            throw new Error('No token provided');
         }
 
         // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
         // Add user from payload
-        const user = await User.findById(decoded.userId).select('-password');
+        const user = await User.findOne({ _id: decoded._id });
 
         if (!user) {
-            return res.status(401).json({ message: 'Token is invalid' });
+            throw new Error('User not found');
         }
 
+        // Add both user object and token to req
+        req.token = token;
         req.user = user;
         next();
     } catch (error) {
-        res.status(401).json({ message: 'Token is invalid' });
+        console.error('Authentication error:', error);
+        res.status(401).json({ message: 'Please authenticate', error: error.message });
     }
 };
 
-const authorize = (...roles) => {
+const authorize = (roles = []) => {
     return (req, res, next) => {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Please authenticate' });
+        }
+
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({ 
-                message: 'You do not have permission to perform this action' 
+                message: 'Access denied: Insufficient permissions',
+                requiredRole: roles,
+                userRole: req.user.role
             });
         }
+
         next();
     };
 };

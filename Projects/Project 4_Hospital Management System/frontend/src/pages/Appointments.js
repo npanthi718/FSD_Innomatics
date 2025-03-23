@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -27,18 +27,64 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from '@mui/material';
-import {
-  Search as SearchIcon,
-  Close as CloseIcon,
-} from '@mui/icons-material';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { useAuth } from '../context/AuthContext';
+} from "@mui/material";
+import { Search as SearchIcon, Close as CloseIcon } from "@mui/icons-material";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { useAuth } from "../context/AuthContext";
+
+// Create an axios instance with base URL and default headers
+const api = axios.create({
+  baseURL: "http://localhost:5000/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Add request interceptor to add token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log("Request config:", {
+      url: config.url,
+      method: config.method,
+      headers: config.headers,
+    });
+    return config;
+  },
+  (error) => {
+    console.error("Request interceptor error:", error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => {
+    console.log("Response:", {
+      url: response.config.url,
+      status: response.status,
+      data: response.data,
+    });
+    return response;
+  },
+  (error) => {
+    console.error("API Error Response:", error.response?.data);
+    if (error.response?.status === 401) {
+      console.log("Unauthorized access, redirecting to login...");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
 
 const Appointments = () => {
   const location = useLocation();
@@ -46,28 +92,28 @@ const Appointments = () => {
   const { user } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [openActionDialog, setOpenActionDialog] = useState(false);
-  const [actionNotes, setActionNotes] = useState('');
+  const [actionNotes, setActionNotes] = useState("");
   const [formData, setFormData] = useState({
-    doctorId: '',
+    doctorId: "",
     date: null,
     time: null,
-    type: 'General Checkup',
-    symptoms: '',
-    notes: '',
+    type: "General Checkup",
+    symptoms: "",
+    notes: "",
   });
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   useEffect(() => {
     const doctorId = location.state?.doctorId;
     if (doctorId) {
-      setFormData(prev => ({ ...prev, doctorId }));
+      setFormData((prev) => ({ ...prev, doctorId }));
       fetchDoctorDetails(doctorId);
     }
     fetchAppointments();
@@ -76,109 +122,97 @@ const Appointments = () => {
 
   useEffect(() => {
     if (error) {
-      console.error('Appointment Error:', error);
+      console.error("Appointment Error:", error);
     }
   }, [error]);
 
   const fetchDoctorDetails = async (doctorId) => {
     try {
-      const response = await axios.get(`/api/doctors/${doctorId}`);
+      const response = await api.get(`/doctors/${doctorId}`);
       const doctorData = response.data;
-      setFormData(prev => ({ 
-        ...prev, 
+      setFormData((prev) => ({
+        ...prev,
         doctorId: doctorData._id,
-        consultationFee: doctorData.consultationFee
+        consultationFee: doctorData.consultationFee,
       }));
     } catch (err) {
-      console.error('Failed to fetch doctor details:', err);
+      console.error("Failed to fetch doctor details:", err);
     }
   };
 
   const fetchAppointments = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to view appointments');
-        return;
-      }
+      const response = await api.get("/patient/appointments");
 
-      const response = await axios.get('/api/appointments', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setAppointments(response.data);
+      setAppointments(Array.isArray(response.data) ? response.data : []);
+      setLoading(false);
     } catch (err) {
-      console.error('Error fetching appointments:', err);
-      setError('Failed to fetch appointments');
+      console.error("Error fetching appointments:", err);
+      setError("Failed to fetch appointments");
+      setLoading(false);
     }
   };
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get('/api/doctors');
-      console.log('Fetched doctors:', response.data);
+      const response = await api.get("/doctors");
+      console.log("Fetched doctors:", response.data);
       setDoctors(response.data);
     } catch (err) {
-      console.error('Failed to fetch doctors:', err);
+      console.error("Failed to fetch doctors:", err);
     }
   };
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
   const handleDateChange = (newDate) => {
-    console.log('New date selected:', newDate);
-    setFormData(prev => ({
+    console.log("New date selected:", newDate);
+    setFormData((prev) => ({
       ...prev,
-      date: newDate
+      date: newDate,
     }));
   };
 
   const handleTimeChange = (newTime) => {
-    console.log('New time selected:', newTime);
-    setFormData(prev => ({
+    console.log("New time selected:", newTime);
+    setFormData((prev) => ({
       ...prev,
-      time: newTime
+      time: newTime,
     }));
   };
 
   const handleNext = () => {
-    console.log('Current form data:', formData);
+    console.log("Current form data:", formData);
     setActiveStep((prev) => prev + 1);
   };
 
   const handleBack = () => {
-    console.log('Current form data:', formData);
+    console.log("Current form data:", formData);
     setActiveStep((prev) => prev - 1);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submit form data:', formData);
-    
+    console.log("Submit form data:", formData);
+
     if (!user) {
       setShowLoginDialog(true);
       return;
     }
 
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please log in to book an appointment');
-        return;
-      }
-
       // Format date and time properly
       const appointmentDate = new Date(formData.date);
       const appointmentTime = new Date(formData.time);
-      
+
       // Create combined date-time
       const combinedDateTime = new Date(
         appointmentDate.getFullYear(),
@@ -189,91 +223,75 @@ const Appointments = () => {
       );
 
       // Format timeSlot in HH:mm format
-      const hours = String(appointmentTime.getHours()).padStart(2, '0');
-      const minutes = String(appointmentTime.getMinutes()).padStart(2, '0');
+      const hours = String(appointmentTime.getHours()).padStart(2, "0");
+      const minutes = String(appointmentTime.getMinutes()).padStart(2, "0");
       const timeSlot = `${hours}:${minutes}`;
+
+      // Get selected doctor details
+      const selectedDoctor = doctors.find((d) => d._id === formData.doctorId);
+      if (!selectedDoctor) {
+        setError("Please select a valid doctor");
+        return;
+      }
 
       const appointmentData = {
         doctorId: formData.doctorId,
         date: combinedDateTime.toISOString(),
         timeSlot: timeSlot,
-        type: formData.type || 'General Checkup',
-        symptoms: formData.symptoms || '',
-        notes: formData.notes || ''
+        type: formData.type || "General Checkup",
+        symptoms: formData.symptoms || "",
+        notes: formData.notes || "",
       };
 
-      console.log('Sending appointment data:', appointmentData);
+      console.log("Sending appointment data:", appointmentData);
 
-      const response = await axios.post('http://localhost:5000/api/appointments', appointmentData, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await api.post("/appointments", appointmentData);
 
-      console.log('Appointment created:', response.data);
-      setSuccess('Appointment booked successfully!');
+      console.log("Appointment created:", response.data);
+      setSuccess("Appointment booked successfully!");
       setOpenDialog(false);
-      fetchAppointments();
+      fetchAppointments(); // Refresh the appointments list
       setFormData({
-        doctorId: '',
+        doctorId: "",
         date: null,
         time: null,
-        type: 'General Checkup',
-        symptoms: '',
-        notes: '',
+        type: "General Checkup",
+        symptoms: "",
+        notes: "",
       });
       setActiveStep(0);
     } catch (err) {
-      console.error('Appointment creation error:', err.response?.data);
-      
-      let errorMessage = 'Failed to book appointment';
-      
-      if (err.response?.data) {
-        if (Array.isArray(err.response.data.errors)) {
-          errorMessage = err.response.data.errors.map(error => error.msg || error.message).join('\n');
-        } else if (err.response.data.message) {
-          errorMessage = err.response.data.message;
-        } else if (typeof err.response.data === 'string') {
-          errorMessage = err.response.data;
-        }
-      }
-      
-      setError(errorMessage);
+      console.error("Error creating appointment:", err);
+      setError(err.response?.data?.message || "Failed to book appointment");
     }
   };
 
   const handleCancelAppointment = async (appointmentId) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(
-        `http://localhost:5000/api/appointments/${appointmentId}/cancel`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSuccess('Appointment cancelled successfully');
+      await api.put(`/appointments/${appointmentId}/cancel`, {});
+      setSuccess("Appointment cancelled successfully");
       fetchAppointments();
     } catch (err) {
-      setError('Failed to cancel appointment');
+      setError("Failed to cancel appointment");
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
-        return 'warning';
-      case 'confirmed':
-        return 'info';
-      case 'completed':
-        return 'success';
-      case 'cancelled':
-        return 'error';
+      case "pending":
+        return "warning";
+      case "confirmed":
+        return "info";
+      case "completed":
+        return "success";
+      case "cancelled":
+        return "error";
       default:
-        return 'default';
+        return "default";
     }
   };
 
-  const steps = ['Select Doctor', 'Choose Date & Time', 'Appointment Details'];
+  const steps = ["Select Doctor", "Choose Date & Time", "Appointment Details"];
 
   const renderStepContent = (step) => {
     switch (step) {
@@ -283,7 +301,7 @@ const Appointments = () => {
             <Typography variant="h6" gutterBottom>
               Select Doctor
             </Typography>
-            <FormControl fullWidth sx={{ mb: 3 }}>
+            <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel>Doctor</InputLabel>
               <Select
                 name="doctorId"
@@ -293,70 +311,40 @@ const Appointments = () => {
               >
                 {doctors.map((doctor) => (
                   <MenuItem key={doctor._id} value={doctor._id}>
-                    {doctor.userId.name} - {doctor.specialization}
+                    {doctor.userId?.name} - {doctor.department?.name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
-            {formData.doctorId && doctors.length > 0 && (
-              <Box sx={{ mt: 2 }}>
-                {(() => {
-                  const selectedDoctor = doctors.find(d => d._id === formData.doctorId);
-                  if (!selectedDoctor) return null;
-                  
-                  return (
-                    <Paper sx={{ p: 2 }}>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} sm={4}>
-                          <img
-                            src={selectedDoctor.profilePhoto || '/images/doctor-placeholder.jpg'}
-                            alt={selectedDoctor.userId.name}
-                            style={{ width: '100%', borderRadius: '8px' }}
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={8}>
-                          <Typography variant="h6" color="primary">
-                            {selectedDoctor.userId.name}
-                          </Typography>
-                          <Typography variant="subtitle1" gutterBottom>
-                            {selectedDoctor.specialization}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary" paragraph>
-                            {selectedDoctor.specialityDescription}
-                          </Typography>
-                          <Box sx={{ mb: 2 }}>
-                            <Chip 
-                              label={`${selectedDoctor.experience} years experience`}
-                              size="small"
-                              sx={{ mr: 1 }}
-                            />
-                            <Chip 
-                              label={`₹${selectedDoctor.consultationFee} consultation fee`}
-                              color="primary"
-                              size="small"
-                            />
-                          </Box>
-                          <Typography variant="subtitle2" gutterBottom>
-                            Available Hours:
-                          </Typography>
-                          {selectedDoctor.availabilitySchedule?.regularHours ? (
-                            Object.entries(selectedDoctor.availabilitySchedule.regularHours).map(([day, hours]) => (
-                              <Typography key={day} variant="body2" color="text.secondary">
-                                {day.charAt(0).toUpperCase() + day.slice(1)}: {hours.morning}, {hours.evening}
-                              </Typography>
-                            ))
-                          ) : (
-                            <Typography variant="body2" color="text.secondary">
-                              Contact clinic for availability
-                            </Typography>
-                          )}
-                        </Grid>
-                      </Grid>
-                    </Paper>
-                  );
-                })()}
-              </Box>
-            )}
+            {formData.doctorId &&
+              doctors.find((d) => d._id === formData.doctorId) && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Doctor Details:
+                  </Typography>
+                  <Typography variant="body2">
+                    Name:{" "}
+                    {
+                      doctors.find((d) => d._id === formData.doctorId).userId
+                        ?.name
+                    }
+                  </Typography>
+                  <Typography variant="body2">
+                    Department:{" "}
+                    {
+                      doctors.find((d) => d._id === formData.doctorId)
+                        .department?.name
+                    }
+                  </Typography>
+                  <Typography variant="body2">
+                    Consultation Fee: Rs.{" "}
+                    {
+                      doctors.find((d) => d._id === formData.doctorId)
+                        .consultationFee
+                    }
+                  </Typography>
+                </Box>
+              )}
           </Box>
         );
 
@@ -373,7 +361,9 @@ const Appointments = () => {
                     label="Appointment Date"
                     value={formData.date}
                     onChange={handleDateChange}
-                    textField={(params) => <TextField {...params} fullWidth required />}
+                    textField={(params) => (
+                      <TextField {...params} fullWidth required />
+                    )}
                     minDate={new Date()}
                   />
                 </LocalizationProvider>
@@ -384,7 +374,9 @@ const Appointments = () => {
                     label="Appointment Time"
                     value={formData.time}
                     onChange={handleTimeChange}
-                    textField={(params) => <TextField {...params} fullWidth required />}
+                    textField={(params) => (
+                      <TextField {...params} fullWidth required />
+                    )}
                   />
                 </LocalizationProvider>
               </Grid>
@@ -450,43 +442,40 @@ const Appointments = () => {
 
   const handleLoginRedirect = () => {
     setShowLoginDialog(false);
-    navigate('/login', { state: { from: '/appointments' } });
+    navigate("/login", { state: { from: "/appointments" } });
   };
 
-  const handleAppointmentAction = async (appointmentId, action, notes = '') => {
+  const handleAppointmentAction = async (appointmentId, action, notes = "") => {
     try {
-      const token = localStorage.getItem('token');
-      let endpoint = '';
-      
-      switch(action) {
-        case 'complete':
-          endpoint = `http://localhost:5000/api/appointments/${appointmentId}/complete`;
+      let endpoint = "";
+
+      switch (action) {
+        case "complete":
+          endpoint = `/appointments/${appointmentId}/complete`;
           break;
-        case 'cancel':
-          endpoint = `http://localhost:5000/api/appointments/${appointmentId}/cancel`;
+        case "cancel":
+          endpoint = `/appointments/${appointmentId}/cancel`;
           break;
         default:
-          throw new Error('Invalid action');
+          throw new Error("Invalid action");
       }
 
-      await axios.put(endpoint, { notes }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put(endpoint, { notes });
 
       setSuccess(`Appointment ${action}d successfully`);
       fetchAppointments();
       setOpenActionDialog(false);
-      setActionNotes('');
+      setActionNotes("");
     } catch (err) {
       setError(`Failed to ${action} appointment`);
     }
   };
 
   const renderAppointmentActions = (appointment) => {
-    if (user?.role === 'doctor') {
+    if (user?.role === "doctor") {
       return (
         <Box>
-          {appointment.status === 'pending' && (
+          {appointment.status === "pending" && (
             <>
               <Button
                 color="success"
@@ -517,53 +506,61 @@ const Appointments = () => {
   };
 
   const renderAppointments = () => {
-    if (!appointments.length) {
-      return (
-        <TableRow>
-          <TableCell colSpan={5} align="center">No appointments found</TableCell>
-        </TableRow>
-      );
-    }
-
-    return appointments.map((appointment) => {
-      const doctorName = appointment.doctorId?.userId?.name || 'Unknown Doctor';
-      const specialization = appointment.doctorId?.specialization || 'N/A';
-      const appointmentDate = new Date(appointment.date);
-      const formattedDate = `${appointmentDate.toLocaleDateString()} ${appointment.timeSlot}`;
-
-      return (
-        <TableRow key={appointment._id}>
-          <TableCell>{doctorName}</TableCell>
-          <TableCell>{specialization}</TableCell>
-          <TableCell>{formattedDate}</TableCell>
-          <TableCell>
-            <Chip
-              label={appointment.status}
-              color={getStatusColor(appointment.status)}
-            />
-          </TableCell>
-          <TableCell>
-            {appointment.status === 'pending' && (
-              <Button
-                color="error"
-                onClick={() => handleCancelAppointment(appointment._id)}
-              >
-                Cancel
-              </Button>
-            )}
-          </TableCell>
-        </TableRow>
-      );
-    });
+    return (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Doctor Name</TableCell>
+              <TableCell>Specialization</TableCell>
+              <TableCell>Date & Time</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {appointments.map((appointment) => (
+              <TableRow key={appointment._id}>
+                <TableCell>
+                  {appointment.doctorId?.userId?.name || "Unknown Doctor"}
+                </TableCell>
+                <TableCell>
+                  {appointment.doctorId?.department?.name || "N/A"}
+                </TableCell>
+                <TableCell>
+                  {new Date(appointment.date).toLocaleDateString()}{" "}
+                  {appointment.timeSlot}
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    label={appointment.status}
+                    color={getStatusColor(appointment.status)}
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>{renderAppointmentActions(appointment)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
   };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
+      >
         <Typography variant="h4" component="h1">
-          {user?.role === 'doctor' ? 'My Patient Appointments' : 'My Appointments'}
+          {user?.role === "doctor"
+            ? "My Patient Appointments"
+            : "My Appointments"}
         </Typography>
-        {user?.role === 'patient' && (
+        {user?.role === "patient" && (
           <Button
             variant="contained"
             color="primary"
@@ -574,38 +571,18 @@ const Appointments = () => {
         )}
       </Box>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {success}
+        </Alert>
+      )}
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {user?.role === 'doctor' ? (
-                <>
-                  <TableCell>Patient Name</TableCell>
-                  <TableCell>Date & Time</TableCell>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Symptoms</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
-                </>
-              ) : (
-                <>
-                  <TableCell>Doctor Name</TableCell>
-                  <TableCell>Specialization</TableCell>
-                  <TableCell>Date & Time</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
-                </>
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {renderAppointments()}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {renderAppointments()}
 
       <Dialog
         open={openDialog}
@@ -614,7 +591,13 @@ const Appointments = () => {
         fullWidth
       >
         <DialogTitle>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Typography variant="h6">Book Appointment</Typography>
             <IconButton onClick={() => setOpenDialog(false)}>
               <CloseIcon />
@@ -635,23 +618,20 @@ const Appointments = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          {activeStep > 0 && (
-            <Button onClick={handleBack}>Back</Button>
-          )}
+          {activeStep > 0 && <Button onClick={handleBack}>Back</Button>}
           {activeStep < steps.length - 1 ? (
             <Button
               variant="contained"
               onClick={handleNext}
-              disabled={!formData.doctorId || (activeStep === 1 && (!formData.date || !formData.time))}
+              disabled={
+                !formData.doctorId ||
+                (activeStep === 1 && (!formData.date || !formData.time))
+              }
             >
               Next
             </Button>
           ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-            >
+            <Button variant="contained" color="primary" onClick={handleSubmit}>
               Book Appointment
             </Button>
           )}
@@ -662,20 +642,29 @@ const Appointments = () => {
         <DialogTitle>Login Required</DialogTitle>
         <DialogContent>
           <Typography>
-            You need to be logged in to book an appointment. Would you like to log in now?
+            You need to be logged in to book an appointment. Would you like to
+            log in now?
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowLoginDialog(false)}>Cancel</Button>
-          <Button onClick={handleLoginRedirect} variant="contained" color="primary">
+          <Button
+            onClick={handleLoginRedirect}
+            variant="contained"
+            color="primary"
+          >
             Go to Login
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={openActionDialog} onClose={() => setOpenActionDialog(false)}>
+      <Dialog
+        open={openActionDialog}
+        onClose={() => setOpenActionDialog(false)}
+      >
         <DialogTitle>
-          {selectedAppointment?.status === 'pending' ? 'Complete' : 'Cancel'} Appointment
+          {selectedAppointment?.status === "pending" ? "Complete" : "Cancel"}{" "}
+          Appointment
         </DialogTitle>
         <DialogContent>
           <TextField
@@ -692,15 +681,22 @@ const Appointments = () => {
         <DialogActions>
           <Button onClick={() => setOpenActionDialog(false)}>Cancel</Button>
           <Button
-            onClick={() => handleAppointmentAction(
-              selectedAppointment?._id,
-              selectedAppointment?.status === 'pending' ? 'complete' : 'cancel',
-              actionNotes
-            )}
-            color={selectedAppointment?.status === 'pending' ? 'success' : 'error'}
+            onClick={() =>
+              handleAppointmentAction(
+                selectedAppointment?._id,
+                selectedAppointment?.status === "pending"
+                  ? "complete"
+                  : "cancel",
+                actionNotes
+              )
+            }
+            color={
+              selectedAppointment?.status === "pending" ? "success" : "error"
+            }
             variant="contained"
           >
-            {selectedAppointment?.status === 'pending' ? 'Complete' : 'Cancel'} Appointment
+            {selectedAppointment?.status === "pending" ? "Complete" : "Cancel"}{" "}
+            Appointment
           </Button>
         </DialogActions>
       </Dialog>
@@ -708,4 +704,4 @@ const Appointments = () => {
   );
 };
 
-export default Appointments; 
+export default Appointments;
