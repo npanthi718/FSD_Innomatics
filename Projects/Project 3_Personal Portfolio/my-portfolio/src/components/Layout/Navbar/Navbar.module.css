@@ -1,0 +1,197 @@
+/* src/components/Layout/Navbar/Navbar.module.css */
+.navbar {
+    background-color: var(--secondary-color);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.navLinks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* Default to horizontal layout */
+    align-items: center;
+    transition: max-height 0.3s ease-out; /* For smooth menu animation */
+}
+
+.navLinks li {
+    margin-left: 30px; /* Spacing between nav links on larger screens */
+}
+
+.navLink {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.navLink:hover {
+    color: var(--accent-color);
+    background-color: var(--primary-color);
+}
+
+.navLink:active {
+    background-color: #e0e0e0; /* Keep this fixed color - active state can be distinct */
+    color: var(--accent-hover-color);
+}
+
+.navActions {
+    display: flex;
+    align-items: center;
+}
+
+.resumeButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 15px;
+    padding: 8px 8px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-right: 10px;
+}
+
+.resumeButton:hover {
+    background-color: var(--accent-hover-color);
+}
+
+.buttonText {
+    margin-left: 0px;
+    color: var(--secondary-color); /* Added: Ensure button text color is themed */
+}
+
+/* Burger Button Styles (for smaller screens) */
+.burgerButton {
+    display: none; /* Hidden by default on larger screens */
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 1.4rem; /* Increased burger button size */
+    height: auto;
+}
+
+.burgerButton:hover {
+    color: var(--accent-color);
+}
+
+
+/* Mobile Styles (smaller screens) */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column; /* Stack logo and burger button vertically */
+        justify-content: center; /* Center content vertically in navbar */
+        align-items: center; /* Center items horizontally */
+        padding: 20px; /* Adjust padding for mobile */
+    }
+
+    .logo {
+        margin-bottom: 15px; /* Add bottom margin for logo on mobile to separate from burger */
+        text-align: center; /* Center logo text */
+    }
+
+    .burgerButton {
+        display: block; /* Show burger button on mobile */
+        position: absolute; /* Position burger button */
+        top: 15px;      /* Adjust top position */
+        right: 20px;     /* Adjust right position */
+    }
+
+    .navLinks {
+        display: none; /* Initially hide nav links on mobile */
+        flex-direction: column; /* Stack nav links vertically */
+        width: 100%; /* Full width for mobile menu */
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        max-height: 0; /* Initially set max-height to 0 for animation */
+        margin-top: 10px; /* Add some space below the logo before menu */
+        background-color: var(--secondary-color); /* Ensure background color for mobile menu */
+    }
+
+    /* Mobile menu when open */
+    .navLinksMobile {
+        display: flex; /* Show nav links when menu is open */
+        max-height: 600px; /* Increased max-height for more links - adjust as needed */
+        padding: 20px 0; /* Add vertical padding when menu is open */
+        overflow-y: auto; /* Enable vertical scroll if menu content exceeds max-height */
+    }
+
+
+    .navLinks li {
+        margin-left: 0;
+        margin-bottom: 15px; /* Spacing between links in mobile menu */
+        height: auto;
+    }
+
+    .navLink {
+        display: block; /* Make nav links full width in mobile menu */
+        padding: 12px 20px; /* Adjusted padding for mobile nav links */
+        text-align: center; /* Center text in mobile nav links */
+    }
+
+    .navActions {
+        display: flex; /* Show Resume and Theme Toggle buttons in mobile menu */
+        flex-direction: column; /* Stack actions vertically in mobile menu */
+        align-items: center; /* Center actions horizontally */
+        margin-top: 15px; /* Add spacing above actions in mobile menu */
+    }
+
+    .resumeButton {
+        margin-left: 0; /* Remove left margin for button in mobile menu */
+        margin-bottom: 10px; /* Add bottom margin between buttons if stacked */
+        margin-right: 0; /* Remove right margin */
+    }
+}
+
+/* Tablet Styles (example range: 769px to 1400px - adjust as needed) */
+@media (min-width: 769px) and (max-width: 1400px) {
+    .navbar {
+        padding: 18px 25px; /* Slightly reduced padding for tablet */
+    }
+
+    .logo {
+        font-size: 1.6rem; /* Slightly smaller logo on tablet */
+    }
+
+    .navLinks li {
+        margin-left: 20px; /* Reduced spacing between nav links on tablet */
+    }
+
+    .navLink {
+        font-size: 0.95rem; /* Slightly smaller nav link text on tablet */
+        padding: 7px 10px; /* Slightly reduced padding for nav links */
+    }
+
+    .resumeButton {
+        padding: 9px 16px; /* Slightly smaller button padding on tablet */
+        font-size: 0.95rem; /* Slightly smaller button text on tablet */
+        margin-right: 10px; /* Reduced right margin for button on tablet */
+    }
+}

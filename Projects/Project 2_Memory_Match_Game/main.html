@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Records</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Game Records</h1>
+    <div id="game-records"></div>
+    <button onclick="goBack()">Go Back</button>
+    <script>
+    function goBack() {
+        window.location.href = 'index.html';
+    }
+
+    function loadGameRecords() {
+        let records = JSON.parse(localStorage.getItem('memoryMatchGameRecords')) || [];
+        const recordDiv = document.getElementById('game-records');
+        
+        if (records.length > 0) {
+            records.forEach(record => {
+            const gameRecord = `
+                <p><strong>Category:</strong> ${record.selectedCategory}</p>
+                <p><strong>Score:</strong> ${record.score}</p>
+                <p><strong>Matched Cards:</strong> ${record.matchedCards}</p>
+                <hr />
+            `;
+            recordDiv.innerHTML += gameRecord;
+            });
+        } else {
+            recordDiv.innerHTML = '<p>No records available.</p>';
+        }
+    }
+
+    window.onload = loadGameRecords;
+    </script>
+</body>
+</html>

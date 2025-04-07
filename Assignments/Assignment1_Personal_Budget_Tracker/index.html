@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget Tracker</title>
+    <link rel="icon" href="budget.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #333;
+        }
+        header {
+            background-color: #0077b6;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 2em;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        section {
+            margin-bottom: 30px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #0077b6;
+        }
+        form label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #555;
+        }
+        form input, form select, form button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+            outline: none;
+            transition: box-shadow 0.3s ease;
+        }
+        form input:focus, form select:focus {
+            border-color: #0077b6;
+            box-shadow: 0 0 8px rgba(0, 119, 182, 0.4);
+        }
+        form button {
+            background-color: #0077b6;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        form button:hover {
+            background-color: #005f8a;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            color: #333;
+        }
+        th {
+            background-color: #0077b6;
+            color: #fff;
+            font-size: 1.1em;
+        }
+        .action-buttons button {
+            padding: 8px 12px;
+            font-size: 0.9em;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .action-buttons .edit-btn {
+            background-color: #f9a826;
+            color: white;
+        }
+        .action-buttons .edit-btn:hover {
+            background-color: #d48c1a;
+        }
+        .action-buttons .delete-btn {
+            background-color: #e63946;
+            color: white;
+        }
+        .action-buttons .delete-btn:hover {
+            background-color: #d62828;
+        }
+        footer {
+            background-color: #023047;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9em;
+        }
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Personal Budget Tracker
+    </header>
+    
+    <div class="container">
+        <section>
+            <h2>Welcome to the Personal Budget Tracker</h2>
+            <p>Manage your finances effectively. Add your income or expenses and review your summary below.</p>
+        </section>
+        
+        <section>
+            <h2>Add New Income or Expense</h2>
+            <form id="budget-form">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" placeholder="Enter amount" required>
+                
+                <label for="type">Type:</label>
+                <select id="type" required>
+                    <option value="Income">Income</option>
+                    <option value="Expense">Expense</option>
+                </select>
+                
+                <label for="category">Category:</label>
+                <select id="category" required>
+                    <option value="Food">Food</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Housing">Housing</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Others">Others</option>
+                </select>
+                
+                <label for="date">Date:</label>
+                <input type="date" id="date" required>
+                
+                <button type="submit">Add Entry</button>
+            </form>
+        </section>
+        
+        <section>
+            <h2>Budget Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="budget-table-body">
+                    <!-- Budget entries will go here -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Personal Budget Tracker | Designed for smarter financial planning</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('budget-form');
+        const tableBody = document.getElementById('budget-table-body');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const amount = document.getElementById('amount').value;
+            const type = document.getElementById('type').value;
+            const category = document.getElementById('category').value;
+            const date = document.getElementById('date').value;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${category}</td>
+                <td>$${amount}</td>
+                <td>${date}</td>
+                <td>${type}</td>
+                <td class="action-buttons">
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+            form.reset();
+
+            row.querySelector('.edit-btn').addEventListener('click', () => editEntry(row));
+            row.querySelector('.delete-btn').addEventListener('click', () => deleteEntry(row));
+        });
+
+        function editEntry(row) {
+            const cells = row.querySelectorAll('td');
+            document.getElementById('category').value = cells[0].textContent;
+            document.getElementById('amount').value = cells[1].textContent.replace('$', '');
+            document.getElementById('date').value = cells[2].textContent;
+            document.getElementById('type').value = cells[3].textContent;
+
+            row.remove();
+        }
+
+        function deleteEntry(row) {
+            row.remove();
+        }
+    </script>
+</body>
+</html>

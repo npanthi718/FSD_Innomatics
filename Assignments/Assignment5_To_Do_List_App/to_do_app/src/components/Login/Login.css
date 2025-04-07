@@ -1,0 +1,109 @@
+/* src/components/Login/Login.css - Modern Login Styles */
+.login-container, .signup-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    width: 400px;
+    text-align: center;
+    animation: slideUp 0.5s ease-out forwards; /* Slide up animation */
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes slideUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container h2, .signup-container h2 {
+    margin-bottom: 30px;
+    color: #3498db;
+    font-size: 2rem;
+}
+
+.error-message {
+    color: #e74c3c;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.login-form, .signup-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #777;
+}
+
+.login-input, .signup-input {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-top: 5px;
+    outline: none;
+    transition: border-color 0.3s ease; /* Border transition on focus */
+}
+
+.login-input:focus, .signup-input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); /* Subtle focus shadow */
+}
+
+.login-button, .signup-button {
+    padding: 14px 22px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Scale animation on hover */
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    transform: scale(1);
+}
+
+.login-button {
+    background-color: #3498db;
+}
+
+.login-button:hover, .signup-button:hover {
+    background-color: #2980b9;
+    transform: scale(1.03);
+}
+
+.signup-button {
+    background-color: #2ecc71;
+}
+
+.signup-button:hover {
+    background-color: #27ae60;
+}
+
+
+/* Responsive adjustments for Login/Signup forms */
+@media (max-width: 576px) {
+    .login-container, .signup-container {
+        padding: 30px;
+        width: 90%;
+    }
+
+    .login-container h2, .signup-container h2 {
+        font-size: 1.8rem;
+    }
+
+    .login-button, .signup-button {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+}

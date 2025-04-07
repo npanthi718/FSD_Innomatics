@@ -1,0 +1,237 @@
+/* src/components/TodoItem/TodoItem.css - Modern TodoItem Styles */
+.todo-item {
+    display: flex;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eee;
+    background-color: transparent;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    transform-origin: left center;
+    flex-wrap: wrap;
+}
+
+.todo-item:last-child {
+    border-bottom: none;
+}
+
+.todo-item.completed {
+    background-color: #e0f7fa;
+    opacity: 0.9;
+    transform: scale(0.99);
+}
+
+.todo-item.completed .todo-checkbox {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+.todo-item.completed .todo-text {
+    color: #95a5a6;
+}
+
+.todo-checkbox {
+    margin-right: 20px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 22px;
+    height: 22px;
+    background-color: #fff;
+    border: 2px solid #bdc3c7;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.todo-checkbox:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+.todo-checkbox:hover {
+    border-color: #777;
+}
+
+.todo-checkbox:checked {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.todo-checkbox:checked::after {
+    content: 'C';
+    color: white;
+    font-size: 16px;
+}
+
+.todo-item-display, .todo-item-editing {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.todo-details {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+}
+
+.todo-text {
+    font-size: 1.1rem;
+    color: #34495e;
+    transition: color 0.3s ease;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.completed .todo-text {
+    text-decoration: line-through;
+}
+
+.todo-due-date {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-style: italic;
+    margin: 0;
+}
+
+
+.todo-actions, .todo-edit-actions {
+    display: flex;
+}
+
+.todo-edit-input, .todo-edit-date-input {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    margin-right: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.todo-edit-input:focus, .todo-edit-date-input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.todo-edit-date-input {
+    max-width: 180px;
+}
+
+.todo-edit-actions button,
+.todo-actions button {
+    margin-left: 10px;
+    cursor: pointer;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transform: scale(1);
+}
+
+.todo-edit-button, .todo-save-button {
+    background-color: #3498db;
+    color: white;
+}
+
+.todo-edit-button:hover, .todo-save-button:hover {
+    background-color: #2980b9;
+    transform: scale(1.03);
+}
+
+.todo-delete-button, .todo-cancel-button {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.todo-delete-button:hover, .todo-cancel-button:hover {
+    background-color: #c0392b;
+    transform: scale(1.03);
+}
+
+.completed-status {
+    color: #2ecc71;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-left: 10px;
+    align-self: center;
+}
+
+.todo-missed-status {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    font-style: normal;
+}
+
+.missed {
+    color: #e74c3c;
+}
+
+
+
+/* Responsive adjustments for TodoItem */
+@media (max-width: 768px) {
+    .todo-item {
+        padding: 15px 20px;
+    }
+
+    .todo-item-display, .todo-item-editing {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .todo-actions, .todo-edit-actions {
+        margin-top: 15px;
+        flex-direction: row;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .todo-edit-input, .todo-edit-date-input {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .todo-details {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .todo-text {
+        font-size: 1rem;
+    }
+
+    .completed-status {
+        margin-top: 10px;
+        margin-left: 0;
+        text-align: right;
+        width: 100%;
+    }
+
+    .completed-status {
+        margin-top: 10px;
+        margin-left: 0;
+        text-align: right;
+        width: 100%;
+    }
+
+    .todo-missed-status {
+        margin-top: 8px;
+        text-align: left;
+        width: 100%;
+    }
+}

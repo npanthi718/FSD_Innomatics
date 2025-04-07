@@ -1,0 +1,174 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.game-container {
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.category-selection h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.category-btn {
+    margin: 10px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.category-btn:hover {
+    background-color: #45a049;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+    transition: transform 0.3s ease;
+}
+
+.card {
+    width: 100%;
+    height: 100px;
+    background-color: #007BFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transform: perspective(600px);
+    transition: transform 0.4s, background-color 0.3s ease;
+}
+
+.card.flipped {
+    background-color: #28a745;
+    transform: rotateY(180deg);
+}
+
+.card:active {
+    transform: scale(1.1);
+}
+
+.score-board {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+#timer {
+    color: red;
+}
+
+.end-message {
+    display: none;
+}
+
+#restart-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #ff5733;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#restart-btn:hover {
+    background-color: #ff6f47;
+}
+
+#restart-btn:active {
+    transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+    .game-board {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+  /* Game Records Page */
+#game-records {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#game-records p {
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:active {
+    transform: scale(1.05);
+}
+
+  /* General Layout for Both Pages */
+button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:active {
+    transform: scale(1.05);
+}

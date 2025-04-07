@@ -1,0 +1,86 @@
+/* src/App.css - Modern & Clean Theme */
+body {
+  margin: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f3f7fa;
+  color: #34495e;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #2c3e50;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  min-height: 100vh;
+  animation: fadeIn 0.5s ease-out forwards; /* Fade in animation on load */
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #3498db;
+}.auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+}.auth-header span {
+  font-weight: 600;
+  color: #555;
+}.logout-button,.auth-toggle-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}.logout-button {
+  background-color: #e74c3c;
+}.logout-button:hover {
+  background-color: #c0392b;
+}.auth-toggle-button {
+  background-color: #3498db;
+  margin-top: 20px;
+}.auth-toggle-button:hover {
+  background-color: #2980b9;
+}
+
+/* Responsive adjustments for App container */
+@media (max-width: 768px) {
+.app-container {
+      padding: 20px;
+  }
+
+  h1 {
+      font-size: 2rem;
+  }
+
+.auth-header {
+      flex-direction: column;
+      align-items: center;
+  }
+
+.auth-header span,.logout-button,.auth-toggle-button {
+      margin: 10px 0;
+      text-align: center;
+  }
+}
