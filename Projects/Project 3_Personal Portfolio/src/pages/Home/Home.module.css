@@ -345,6 +345,62 @@ html { scroll-behavior: smooth; }
     margin-bottom: 8px; /* Even further reduced bottom margin for date/duration */
 }
 
+
+/* ----------------------------------------------------- */
+/* Research Paper Section - List Alignment and Spacing */
+/* ----------------------------------------------------- */
+.PaperList {
+    max-width: 95%;
+    margin-top: 5px;
+    margin-bottom: -5px;;
+    width: 95%;
+}
+
+.PaperItem {
+    background-color: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 11px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease-in-out;
+    text-align: left;
+    color: var(--text-color);
+}
+.PaperItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.1);
+}
+
+.PaperTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: -12px;
+}
+.OrganizerName {
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    margin-bottom: 0px;
+}
+
+.dateLocation {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 13px;
+    opacity: 0.75;
+}
+.descriptionList { padding-left: 16px; margin-top: 6px; }
+.descriptionItem {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.5;
+    margin-bottom: 5px;
+    list-style-type: disc;
+    opacity: 0.9;
+}
+
+
 /* ----------------------------------------------------- */
 /* Contact Section - Alignment and Form Styling - Refined Contact List Layout */
 /* ----------------------------------------------------- */

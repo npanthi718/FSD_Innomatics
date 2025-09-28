@@ -41,7 +41,7 @@ function Home() {
     const projectsData = [
 
         {
-            title: 'Hospital Management System',
+            title: 'LumbiniCare Connect: Lumbini Nepal Hospital',
             technologies: ['MERN Stack', 'MongoDB', 'Express.js', 'React.js', 'Node.js', 'Material-UI', 'JWT Authentication', 'RESTful APIs'],
             liveLink: 'https://lumbini-nepal-hospital-mern-stack-project.onrender.com/',
             githubLink: 'https://github.com/npanthi718/Lumbini-Nepal-Hospital--MERN-Stack-Project',
@@ -53,8 +53,24 @@ function Home() {
             ]
         },
 
+
         {
-            title: 'Face Recognition Attendance System',
+            title: 'SushilGPT: Full-Stack AI Chat Platform',
+            technologies: [
+                'MERN Stack', 'MongoDB', 'Express.js', 'React.js', 'Node.js', 'Vite', 'CSS Modules', 'OpenAI API'
+            ],
+            liveLink: null,
+            githubLink: 'https://github.com/npanthi718/SushilGPT',
+            keyContributions: [
+                'Developed a ChatGPT-inspired conversational AI platform featuring real-time chat using the MERN stack.',
+                'Integrated OpenAI API for generating intelligent and context-aware responses, enabling seamless user interaction.',
+                'Implemented persistent chat history storage with MongoDB and designed RESTful APIs for robust backend operations.',
+                'Created a modern, responsive UI using React.js, Vite, and CSS modules, ensuring an engaging user experience across devices.'
+            ]
+        },
+
+        {
+            title: 'FaceMark: Automated Attendance Solution',
             technologies: ['Python 3.9', 'OpenCV 4.x', 'Face Recognition Library', 'Tkinter', 'Numpy', 'Pandas'],
             liveLink: null,
             githubLink: 'https://github.com/npanthi718/Face_Recognition_Attendance',
@@ -66,7 +82,7 @@ function Home() {
         },
 
         {
-            title: 'Supermarket Management System',
+            title: 'StockSmart: MEN Stack Inventory & Billing',
             technologies: ['MongoDB', 'Express.js', 'Node.js', 'HTML/CSS', 'MEN Stack'],
             liveLink: null,
             githubLink: 'https://github.com/npanthi718/SuperMarket-Management-Using-MEN-Stack',
@@ -78,7 +94,7 @@ function Home() {
             ],
         },
         {
-            title: 'Student Management System',
+            title: 'StudentTrack: Django-Based Management',
             technologies: ['Python', 'JavaScript', 'Django', 'HTML/CSS'],
             liveLink: null,
             githubLink: 'https://github.com/npanthi718/Student-Management-System',
@@ -210,7 +226,7 @@ function Home() {
             title: 'President, Nature Club',
             company: 'Vijaya Memorial Secondary School',
             date: '2020 - 2021', // Year
-            location: 'Kathmandu, Nepal' ,
+            location: 'Kathmandu, Nepal',
             description: [
                 'Led tree plantation drives, clean-up campaigns, and biodiversity seminars.',
                 'Promoted eco-friendly practices like recycling and waste reduction in school.',
@@ -271,6 +287,60 @@ function Home() {
         },
     ];
 
+    const researchpapersData = [
+        {
+            title: 'A Blockchain-Driven Decentralized Framework for Secure and Automated Spectrum Trading in 6G Wireless Networks Using Automata Theory',
+            organizer: 'International Conference on Advances in Computational Intelligence and Applications-2025',
+            institution: 'Insitute of Information Technology & Management(IITM), GGS Indraprastha University, New Delhi',
+            date: 'November 7, 2025 (accepted yet to be presented)',
+            location: 'Online Presentation',
+            description: [
+                'Developed a blockchain-based decentralized framework for secure and automated spectrum trading in 6G networks using smart contracts and finite state automata for verification.',
+                'Ensured privacy and trust through Zero-Knowledge Proofs and tokenization of spectrum assets as digital NFTs.',
+                'Integrated machine learning to enhance real-time trade validation, reducing latency and improving transaction success rates compared to centralized systems.',
+            ],
+        },
+
+        {
+            title: ' AI-Augmented Real-Time Character Animation in AR/VR Using Consumer-Grade Motion Capture and Automata-Guided Workflow',
+            organizer: '(ICETDA 2025), 3rd International Conference on Emerging Trends of Design & Arts',
+            institution: 'Poornima University, Jaipur, Rajasthan',
+            date: 'September, 2025',
+            location: 'Online Presentation',
+            description: [
+                'Created a deep learning and automata-driven system for real-time AR/VR character animation using affordable consumer-grade motion capture devices.',
+                'Achieved high accuracy (up to 95%) and low latency (<50 ms) with superior garment alignment and robust performance across diverse applications.',
+                'Awarded Best Paper at ICEIDA 2025 for scalable innovation in immersive animation.'
+            ],
+        },
+
+        {
+            title: 'A Bioinformatics-Inspired Machine Learning Framework for Financial Fraud Detection Using Sequence Alignment and Evolutionary Optimization',
+            organizer: '(FINCON 2025), International Financial Security and Management Conference-2025',
+            institution: 'National Forensic Sciences University, Gandhinagar, Gujarat',
+            date: 'August, 2025',
+            location: 'Online Presentation',
+            description: [
+                'Proposed a bioinformatics-inspired framework using sequence alignment and motif discovery for advanced financial fraud detection.',
+                'Applied genetic algorithms for real-time, adaptive model tuning to boost accuracy and handle severe class imbalance.',
+                'Achieved 95%+ accuracy and F1-score, outperforming traditional ML methods with better interpretability and robustness.'
+            ],
+        },
+
+        {
+            title: 'Harnessing Machine Learning to Detect and Prevent Credit Card Fraud',
+            organizer: 'IEEE Conferences- ARRIA 2024',
+            institution: 'Manipal Institute of Technology, Manipal, Karnataka',
+            date: 'December, 2024',
+            location: 'Online Presentation',
+            description: [
+                'Identified and emphasized crucial anonymized features (V17, V14, and V10) for predicting fraudulent activities, significantly enhancing model performance.',
+                'Highlighted the importance of feature selection and data preprocessing in improving fraud detection systems.',
+                'Demonstrated the potential for implementing machine learning models to significantly reduce financial losses and increase security in financial transactions.',
+            ],
+        },
+    ];
+
 
     const [formData, setFormData] = useState({ // State for form data
         name: '',
@@ -309,42 +379,42 @@ function Home() {
                         transition={{ duration: 0.7, delay: 0.6, type: 'spring', stiffness: 80 }}
                     />
                     <div className={styles.text}>
-                    <motion.h1
-                className={styles.name}
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.8, type: 'spring', stiffness: 100 }}
-            >
-                Hi, I'm{' '}
-                <ReactTyped
-                    strings={['Sushil Panthi']}
-                    typeSpeed={100}
-                    backSpeed={50}
-                    startDelay={1000}
-                    backDelay={3500}
-                    loop={true}
-                    showCursor={false}
-                />
-            </motion.h1>
+                        <motion.h1
+                            className={styles.name}
+                            initial={{ opacity: 0, y: -50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.8, type: 'spring', stiffness: 100 }}
+                        >
+                            Hi, I'm{' '}
+                            <ReactTyped
+                                strings={['Sushil Panthi']}
+                                typeSpeed={100}
+                                backSpeed={50}
+                                startDelay={1000}
+                                backDelay={3500}
+                                loop={true}
+                                showCursor={false}
+                            />
+                        </motion.h1>
 
-            {/* Typing effect for "Full Stack Developer (MERN)" and "Power BI Developer" */}
-            <motion.p
-                className={styles.tagline}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 1.0, type: 'spring', stiffness: 100 }}
-            >
-                <ReactTyped
-                    strings={['Full Stack Developer (MERN)', 'Power BI Developer']}
-                    typeSpeed={100}
-                    backSpeed={50}
-                    startDelay={1000}
-                    backDelay={3500}
-                    loop={true}
-                    showCursor={false}
-                />
-                {' '}| Open to Relocation
-            </motion.p>
+                        {/* Typing effect for "Full Stack Developer (MERN)" and "Power BI Developer" */}
+                        <motion.p
+                            className={styles.tagline}
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 1.0, type: 'spring', stiffness: 100 }}
+                        >
+                            <ReactTyped
+                                strings={['Full Stack Developer (MERN)', 'Power BI Developer']}
+                                typeSpeed={100}
+                                backSpeed={50}
+                                startDelay={1000}
+                                backDelay={3500}
+                                loop={true}
+                                showCursor={false}
+                            />
+                            {' '}| Open to Relocation
+                        </motion.p>
                         <motion.p
                             className={styles.overview}
                             initial={{ opacity: 0 }}
@@ -669,6 +739,53 @@ function Home() {
             </motion.section>
 
 
+            {/* Research Paper Sections */}
+            <motion.section
+                id="Papers"
+                className={styles.experience}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+            >
+                <motion.h2
+                    className={styles.sectionTitle}
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                >
+                    Research Papers
+                </motion.h2>
+                <motion.div
+                    className={styles.PaperList}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.6, staggerChildren: 0.2 }}
+                >
+                    {researchpapersData.map((papers, index) => (
+                        <motion.div
+                            className={styles.PaperItem}
+                            key={index}
+                            variants={{
+                                hidden: { opacity: 0, y: 20 },
+                                visible: { opacity: 1, y: 0 },
+                            }}
+                        >
+                            <h3 className={styles.PaperTitle}>{papers.title}</h3>
+                            <h4 className={styles.OrganizerName}>{papers.organizer}</h4>
+                            <h5 className={styles.PaperList}>{papers.institution}</h5>
+                            <p className={styles.dateLocation}>{papers.date} | {papers.location}</p>
+                            <ul className={styles.descriptionList}>
+                                {papers.description.map((desc, descIndex) => (
+                                    <li key={descIndex} className={styles.descriptionItem}>{desc}</li>
+                                ))}
+                            </ul>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            </motion.section>
+
+
+
             <motion.section
                 id="contact"
                 className={styles.contact}
@@ -691,7 +808,7 @@ function Home() {
                     transition={{ duration: 0.6, delay: 0.6 }}
                 >
                     <p className={styles.contactText}>
-                        Feel free to reach out to me for any questions or opportunities! Or use the form below to get in touch.
+                        Feel free to reach out to me for any questions or opportunities!  Or use the form below to get in touch 'Within 48 hours' .
                     </p>
 
                     {/* Contact Form */}
@@ -749,6 +866,9 @@ function Home() {
                         </motion.button>
                     </motion.form>
                 </motion.div>
+                <p className={styles.contactText}>
+                    You can fill the attached google form for faster response 'Within 2 hours'   <a href="https://forms.gle/ntuoEHJF9wqzBjtN9">Get in Touch with Sushil</a>
+                </p>
             </motion.section>
         </div>
     );
