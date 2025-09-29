@@ -107,6 +107,21 @@ function Home() {
     ];
 
     const experienceData = [
+
+        {
+            title: 'Tech Intern',
+            company: 'Anishk Sustainable Development Foundation (ASDF)',
+            date: '04/2024 - 04/2025',
+            location: 'Remote',
+            description: [
+                'Collaborated with a team to develop the "Arka Journal" website, focusing on research and publications related to rural and tribal community initiatives.',
+                'Utilized HTML, CSS, JavaScript, and PHP to build a responsive, user-friendly website for showcasing research papers and publications.',
+                'Worked closely with developers, designers, and researchers to integrate research content seamlessly into the website.',
+                'Enhanced the accessibility and visibility of community-driven research by creating a digital platform for sharing knowledge and innovations.',
+            ],
+        },
+
+
         {
             title: 'Full Stack Development Intern',
             company: 'Innomatics Research Labs',
@@ -132,18 +147,7 @@ function Home() {
                 'Enhanced technical knowledge through hands-on experience and real-world application of software development concepts.',
             ],
         },
-        {
-            title: 'Tech Intern',
-            company: 'Anishk Sustainable Development Foundation (ASDF)',
-            date: '04/2024 - 12/2024',
-            location: 'Remote',
-            description: [
-                'Collaborated with a team to develop the "Arka Journal" website, focusing on research and publications related to rural and tribal community initiatives.',
-                'Utilized HTML, CSS, JavaScript, and PHP to build a responsive, user-friendly website for showcasing research papers and publications.',
-                'Worked closely with developers, designers, and researchers to integrate research content seamlessly into the website.',
-                'Enhanced the accessibility and visibility of community-driven research by creating a digital platform for sharing knowledge and innovations.',
-            ],
-        },
+
     ];
 
     const additionalExperienceData = [
@@ -204,7 +208,7 @@ function Home() {
             degree: 'Bachelor of Computer Applications (BCA)',
             institution: 'School of Computer Science and Engineering, Sandip University',
             dates: 'July 2023 - July 2026',
-            cgpa: '8.5/10',
+            cgpa: '8.2/10',
         },
         {
             degree: 'Secondary Level (+2)',
@@ -347,6 +351,7 @@ function Home() {
         email: '',
         message: '',
     });
+    const [feedback, setFeedback] = useState('');
 
     const handleChange = (e) => {  // Handle form input changes
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -355,8 +360,9 @@ function Home() {
     const handleSubmit = (e) => { // Handle form submission
         e.preventDefault();
         console.log("Form Data:", formData);
-        alert("Thankyou! Form submitted! Will reach with you within 48hrs");
         setFormData({ name: '', email: '', message: '' });
+        setFeedback("Thank you! Form submitted. We'll reach out within 48 hours.");
+        setTimeout(() => setFeedback(''), 4000);
     };
 
 
@@ -476,7 +482,7 @@ function Home() {
                                 <strong>Email:</strong> <a href="mailto:npanthi718@gmail.com">npanthi718@gmail.com</a>
                             </li>
                             <li className={styles.contactListItem}>
-                                <strong>Phone:</strong> <a href='tel:+917602018437'>+91 7602018437</a>
+                                <strong>Phone:</strong> <a href='tel:+919359029905'>+91 9359029905</a>
                             </li>
                             <li className={styles.contactListItem}>
                                 <strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/sushilpanthi/" target="_blank" rel="noopener noreferrer">Sushil Panthi</a>
@@ -865,10 +871,31 @@ function Home() {
                             Get Connected
                         </motion.button>
                     </motion.form>
+                    {feedback && (
+                        <motion.div
+                            className={styles.feedbackMessage}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 20 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            {feedback}
+                        </motion.div>
+                    )}
                 </motion.div>
-                <p className={styles.contactText}>
-                    You can fill the attached google form for faster response 'Within 2 hours'   <a href="https://forms.gle/ntuoEHJF9wqzBjtN9">Get in Touch with Sushil</a>
-                </p>
+                <div className={styles.googleFormBox}>
+                    <span className={styles.googleFormText}>
+                        🚀 For a faster response (within <strong>2 hours</strong>), fill out the attached Google form:
+                    </span>
+                    <a
+                        href="https://forms.gle/ntuoEHJF9wqzBjtN9"
+                        target="_blank"
+                        rel="noreferrer"
+                        className={styles.googleFormButton}
+                    >
+                        Get in Touch with Sushil
+                    </a>
+                </div>
             </motion.section>
         </div>
     );

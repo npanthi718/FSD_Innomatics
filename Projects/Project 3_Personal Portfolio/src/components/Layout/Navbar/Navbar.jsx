@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Navbar.module.css";
-import DownloadResume from "../../../assets/16-Sep-2025 Resume Updated Sushil.pdf";
+import DownloadResume from "../../../assets/Resume.pdf";
 import { FiDownload } from "react-icons/fi";
 import { FaBars, FaTimes } from "react-icons/fa";
 

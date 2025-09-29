@@ -1,9 +1,13 @@
 /* src/pages/Home/Home.module.css */
 
 /* Global Styles and Smooth Scrolling (No Changes) */
-html { scroll-behavior: smooth; }
+html {
+    scroll-behavior: smooth;
+}
 
-.homeContainer { overflow: hidden; }
+.homeContainer {
+    overflow: hidden;
+}
 
 /* ----------------------------------------------------- */
 /* Home Section - Refinements for Alignment and Spacing */
@@ -38,16 +42,21 @@ html { scroll-behavior: smooth; }
     transition: transform 0.3s ease-in-out;
 }
 
-.profileImage:hover { transform: scale(1.04); }
+.profileImage:hover {
+    transform: scale(1.04);
+}
 
-.text { margin-top: 0; text-align: justify; }
+.text {
+    margin-top: 0;
+    text-align: justify;
+}
 
 .text h1.name {
     font-size: 1.6rem;
     font-weight: 780;
     color: var(--accent-color);
     margin-bottom: 6px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     letter-spacing: 0.2px;
 }
 
@@ -95,7 +104,10 @@ html { scroll-behavior: smooth; }
         box-shadow: 0 5px 16px rgba(0, 0, 0, 0.2);
         border: 4px solid var(--secondary-color);
     }
-    .profileImage:hover { transform: scale(1.05); }
+
+    .profileImage:hover {
+        transform: scale(1.05);
+    }
 
 
     .text {
@@ -142,7 +154,7 @@ html { scroll-behavior: smooth; }
     color: var(--accent-color);
     margin-bottom: 16px;
     text-align: center;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     letter-spacing: 0.5px;
     margin-top: 130px;
 }
@@ -160,6 +172,7 @@ html { scroll-behavior: smooth; }
     margin-bottom: 22px;
     color: var(--text-color);
 }
+
 .content p {
     margin-bottom: 16px;
     color: var(--text-color);
@@ -189,7 +202,10 @@ html { scroll-behavior: smooth; }
     text-align: center;
     letter-spacing: 0.3px;
 }
-.aboutContactDetails .contactList { margin-bottom: 0; }
+
+.aboutContactDetails .contactList {
+    margin-bottom: 0;
+}
 
 /* ----------------------------------------------------- */
 /* Skills Section - Grid Layout and Alignment */
@@ -203,7 +219,9 @@ html { scroll-behavior: smooth; }
     width: 95%;
 }
 
-.skillCategory { margin-bottom: 12px; }
+.skillCategory {
+    margin-bottom: 12px;
+}
 
 .skillCategoryTitle {
     font-size: 1.6rem;
@@ -253,6 +271,7 @@ html { scroll-behavior: smooth; }
     text-align: left;
     color: var(--text-color);
 }
+
 .experienceItem:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 14px rgba(0, 0, 0, 0.1);
@@ -264,18 +283,25 @@ html { scroll-behavior: smooth; }
     color: var(--text-color);
     margin-bottom: 6px;
 }
+
 .companyName {
     font-size: 1.1rem;
     color: var(--accent-color);
     margin-bottom: 5px;
 }
+
 .dateLocation {
     font-size: 0.9rem;
     color: var(--text-color);
     margin-bottom: 16px;
     opacity: 0.75;
 }
-.descriptionList { padding-left: 16px; margin-top: 6px; }
+
+.descriptionList {
+    padding-left: 16px;
+    margin-top: 6px;
+}
+
 .descriptionItem {
     font-size: 0.9rem;
     color: var(--text-color);
@@ -288,61 +314,106 @@ html { scroll-behavior: smooth; }
 /* ----------------------------------------------------- */
 /* Education, Certificates, Courses, Achievements Sections - Consistent Styling - TARGETED FIXES HERE */
 /* ----------------------------------------------------- */
-.education, .courses, .achievements {
-    padding: 60px 15px; /* Further reduced padding for very small screens */
+.education,
+.courses,
+.achievements {
+    padding: 60px 15px;
+    /* Further reduced padding for very small screens */
 }
-.educationList, .courseList, .achievementList {
-    max-width: 98%; /* Slightly wider for lists to utilize more space */
-    margin-top: 15px; /* Reduced top margin for lists */
-    width: 98%; /* Slightly wider width for lists */
-    display: flex; /* Ensure flexbox is enabled */
-    flex-direction: column; /* Stack items vertically by default for better mobile behavior */
-    align-items: stretch; /* Stretch items to full width of the container */
+
+.educationList,
+.courseList,
+.achievementList {
+    max-width: 98%;
+    /* Slightly wider for lists to utilize more space */
+    margin-top: 15px;
+    /* Reduced top margin for lists */
+    width: 98%;
+    /* Slightly wider width for lists */
+    display: flex;
+    /* Ensure flexbox is enabled */
+    flex-direction: column;
+    /* Stack items vertically by default for better mobile behavior */
+    align-items: stretch;
+    /* Stretch items to full width of the container */
 }
-.educationList, .achievementList {
-    align-items: flex-start; /* Keep left alignment for Education, Achievements lists */
+
+.educationList,
+.achievementList {
+    align-items: flex-start;
+    /* Keep left alignment for Education, Achievements lists */
 }
+
 .courseList {
-    flex-wrap: wrap; /* Allow courses to wrap to multiple rows */
-    justify-content: center; /* Center courses in Course List */
-    gap: 10px; /* Further reduced gap between courses for very small screens */
+    flex-wrap: wrap;
+    /* Allow courses to wrap to multiple rows */
+    justify-content: center;
+    /* Center courses in Course List */
+    gap: 10px;
+    /* Further reduced gap between courses for very small screens */
 }
-.courseCard, .educationCard, .achievementCard {
+
+.courseCard,
+.educationCard,
+.achievementCard {
     background-color: var(--card-background);
-    padding: 15px; /* Even further reduced padding for cards for very small screens */
-    border-radius: 6px; /* Even smaller border radius for cards */
-    margin-bottom: 15px; /* Even further reduced bottom margin for cards for very small screens */
+    padding: 15px;
+    /* Even further reduced padding for cards for very small screens */
+    border-radius: 6px;
+    /* Even smaller border radius for cards */
+    margin-bottom: 15px;
+    /* Even further reduced bottom margin for cards for very small screens */
     box-shadow: var(--card-shadow-lightest);
     border: 1px solid var(--border-color);
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease-in-out;
     text-align: left;
     color: var(--text-color);
-    width: 100%; /* **NEW**: Make cards take full width of their container on mobile */
-    box-sizing: border-box; /* **NEW**: Ensure padding is inside width */
-    min-width: 0;       /* **NEW**: Allow cards to shrink below content width if necessary */
+    width: 100%;
+    /* **NEW**: Make cards take full width of their container on mobile */
+    box-sizing: border-box;
+    /* **NEW**: Ensure padding is inside width */
+    min-width: 0;
+    /* **NEW**: Allow cards to shrink below content width if necessary */
 }
-.courseCard:hover, .educationCard:hover, .achievementCard:hover {
-    transform: translateY(-1px); /* Even further reduced lift on card hover */
+
+.courseCard:hover,
+.educationCard:hover,
+.achievementCard:hover {
+    transform: translateY(-1px);
+    /* Even further reduced lift on card hover */
     box-shadow: var(--card-shadow-lg);
 }
+
 .cardTitle {
-    font-size: 1rem; /* Even smaller card titles for very small screens */
+    font-size: 1rem;
+    /* Even smaller card titles for very small screens */
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 5px; /* Even reduced bottom margin for card titles */
-    word-wrap: break-word; /* **NEW**: Ensure card titles wrap if they are long */
+    margin-bottom: 5px;
+    /* Even reduced bottom margin for card titles */
+    word-wrap: break-word;
+    /* **NEW**: Ensure card titles wrap if they are long */
 }
-.institution, .courseProvider {
-    font-size: 0.9rem;  /* Even smaller institution/provider size for very small screens */
+
+.institution,
+.courseProvider {
+    font-size: 0.9rem;
+    /* Even smaller institution/provider size for very small screens */
     color: var(--accent-color);
-    margin-bottom: 4px; /* Even further reduced bottom margin for institution/provider */
-    word-wrap: break-word; /* **NEW**: Ensure institution/provider names wrap if they are long */
+    margin-bottom: 4px;
+    /* Even further reduced bottom margin for institution/provider */
+    word-wrap: break-word;
+    /* **NEW**: Ensure institution/provider names wrap if they are long */
 }
-.dateRange, .duration {
-    font-size: 0.8rem; /* Even further reduced date/duration size for very small screens */
+
+.dateRange,
+.duration {
+    font-size: 0.8rem;
+    /* Even further reduced date/duration size for very small screens */
     color: var(--text-color);
     opacity: 0.75;
-    margin-bottom: 8px; /* Even further reduced bottom margin for date/duration */
+    margin-bottom: 8px;
+    /* Even further reduced bottom margin for date/duration */
 }
 
 
@@ -352,7 +423,8 @@ html { scroll-behavior: smooth; }
 .PaperList {
     max-width: 95%;
     margin-top: 5px;
-    margin-bottom: -5px;;
+    margin-bottom: -5px;
+    ;
     width: 95%;
 }
 
@@ -367,6 +439,7 @@ html { scroll-behavior: smooth; }
     text-align: left;
     color: var(--text-color);
 }
+
 .PaperItem:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 14px rgba(0, 0, 0, 0.1);
@@ -378,6 +451,7 @@ html { scroll-behavior: smooth; }
     color: var(--text-color);
     margin-bottom: -12px;
 }
+
 .OrganizerName {
     font-size: 1.1rem;
     color: var(--accent-color);
@@ -390,7 +464,12 @@ html { scroll-behavior: smooth; }
     margin-bottom: 13px;
     opacity: 0.75;
 }
-.descriptionList { padding-left: 16px; margin-top: 6px; }
+
+.descriptionList {
+    padding-left: 16px;
+    margin-top: 6px;
+}
+
 .descriptionItem {
     font-size: 0.9rem;
     color: var(--text-color);
@@ -404,13 +483,16 @@ html { scroll-behavior: smooth; }
 /* ----------------------------------------------------- */
 /* Contact Section - Alignment and Form Styling - Refined Contact List Layout */
 /* ----------------------------------------------------- */
-.contactSection { padding-bottom: 100px; }
+.contactSection {
+    padding-bottom: 100px;
+}
 
 .contactInfo {
     max-width: 95%;
     text-align: left;
     margin-bottom: 20px;
 }
+
 .contactText {
     font-size: 1rem;
     color: var(--text-color);
@@ -425,7 +507,8 @@ html { scroll-behavior: smooth; }
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align items to the start (left) */
+    align-items: flex-start;
+    /* Align items to the start (left) */
 }
 
 .contactListItem {
@@ -433,20 +516,28 @@ html { scroll-behavior: smooth; }
     font-size: 0.9rem;
     color: var(--text-color);
     opacity: 0.9;
-    display: flex; /* Use Flexbox for list items */
-    flex-direction: row; /* Arrange label and detail in a row */
-    align-items: baseline; /* Align text baselines */
-    justify-content: flex-start; /* Left justify items */
-    gap: 10px; /* Add gap between label and detail */
+    display: flex;
+    /* Use Flexbox for list items */
+    flex-direction: row;
+    /* Arrange label and detail in a row */
+    align-items: baseline;
+    /* Align text baselines */
+    justify-content: flex-start;
+    /* Left justify items */
+    gap: 10px;
+    /* Add gap between label and detail */
 }
 
 .contactListItem strong {
     font-weight: 600;
     color: var(--text-color);
     text-align: left;
-    min-width: 80px; /* Increased min-width for labels */
-    display: inline-block; /* Keep as inline-block */
-    flex-shrink: 0; /* Prevent label from shrinking */
+    min-width: 80px;
+    /* Increased min-width for labels */
+    display: inline-block;
+    /* Keep as inline-block */
+    flex-shrink: 0;
+    /* Prevent label from shrinking */
 }
 
 .contactListItem a {
@@ -455,8 +546,10 @@ html { scroll-behavior: smooth; }
     transition: color 0.3s ease;
     border-bottom: 1px dotted var(--accent-color);
     padding-bottom: 1px;
-    word-break: break-all; /* **NEW**: Allow long links to break */
+    word-break: break-all;
+    /* **NEW**: Allow long links to break */
 }
+
 .contactListItem a:hover {
     color: var(--accent-hover-color);
     border-bottom-color: var(--accent-hover-color);
@@ -466,23 +559,31 @@ html { scroll-behavior: smooth; }
 /* Contact Form - Alignment and Spacing - Further Width Fixes */
 /* ----------------------------------------------------- */
 .contactForm {
-    max-width: 95%; /* Take full width up to 95% of parent */
+    max-width: 95%;
+    /* Take full width up to 95% of parent */
     margin: 15px auto 0;
-    padding: 20px; /* Keep base padding, but may reduce on smaller screens */
+    padding: 20px;
+    /* Keep base padding, but may reduce on smaller screens */
     border-radius: 7px;
     background-color: var(--card-background);
     box-shadow: var(--card-shadow-lightest);
     border: 1px solid var(--border-color);
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    width: 95%; /* Ensure width is 95% */
+    width: 95%;
+    /* Ensure width is 95% */
     margin-left: auto;
     margin-right: auto;
     color: var(--text-color);
-    box-sizing: border-box; /* Very important: Include padding and border in element's total width */
-    overflow-x: hidden; /* **NEW**:  Prevent horizontal scrollbar if content *slightly* overflows */
+    box-sizing: border-box;
+    /* Very important: Include padding and border in element's total width */
+    overflow-x: hidden;
+    /* **NEW**:  Prevent horizontal scrollbar if content *slightly* overflows */
 }
 
-.formGroup { margin-bottom: 12px; }
+.formGroup {
+    margin-bottom: 12px;
+}
+
 .formLabel {
     display: block;
     margin-bottom: 5px;
@@ -492,7 +593,9 @@ html { scroll-behavior: smooth; }
     letter-spacing: 0.1px;
     text-align: left;
 }
-.formInput, .formTextarea {
+
+.formInput,
+.formTextarea {
     width: 100%;
     padding: 10px;
     border-radius: 5px;
@@ -501,17 +604,44 @@ html { scroll-behavior: smooth; }
     color: var(--text-color);
     font-size: 0.85rem;
     transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    box-sizing: border-box; /* Very important: Include padding and border in input's total width */
-    min-width: 0; /* **NEW**: Allow inputs/textareas to shrink if necessary */
+    box-sizing: border-box;
+    /* Very important: Include padding and border in input's total width */
+    min-width: 0;
+    /* **NEW**: Allow inputs/textareas to shrink if necessary */
 }
-.formInput:focus, .formTextarea:focus {
+
+.formInput:focus,
+.formTextarea:focus {
     outline: none;
     border-color: var(--accent-color);
     box-shadow: 0 0 0 2px var(--accent-color-transparent), 0 0 3px rgba(var(--accent-color-rgb), 0.3);
 }
-.formTextarea { resize: vertical; }
 
-.submitButton, .resumeButton { /* Consistent Button Styling - DRY principle applied */
+.formTextarea {
+    resize: vertical;
+}
+
+/* Stylish feedback message for contact form */
+.feedbackMessage {
+    margin-top: 18px;
+    padding: 14px 22px;
+    background: var(--accent-color);;
+    color: #0f0e0e;
+    border-radius: 7px;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(56, 176, 0, 0.12);
+    text-align: center;
+    letter-spacing: 0.2px;
+    opacity: 0.97;
+    border: 1px solid #38b000;
+    transition: opacity 0.5s, transform 0.5s;
+    z-index: 2;
+}
+
+.submitButton,
+.resumeButton {
+    /* Consistent Button Styling - DRY principle applied */
     display: inline-block;
     padding: 9px 22px;
     background-color: var(--accent-color);
@@ -524,16 +654,69 @@ html { scroll-behavior: smooth; }
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
     letter-spacing: 0.3px;
-    box-sizing: border-box; /* **NEW**: Ensure button padding is included in width */
-    min-width: 0;        /* **NEW**: Allow buttons to shrink if necessary */
+    box-sizing: border-box;
+    /* **NEW**: Ensure button padding is included in width */
+    min-width: 0;
+    /* **NEW**: Allow buttons to shrink if necessary */
 }
-.submitButton:hover, .resumeButton:hover {
+
+.submitButton:hover,
+.resumeButton:hover {
     background-color: var(--accent-hover-color);
     transform: translateY(-1.5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.resumeButton { margin-top: 20px; /* Further reduced top margin for resume button */ }
+/* Stylish Google Form box below contact form */
+.googleFormBox {
+    margin-top: 28px;
+    margin-left: 30px;
+    margin-right: 90px;
+    padding: 18px 24px;
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 119, 255, 0.10);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+}
+
+.googleFormText {
+    color: #fff;
+    font-size: 1.08rem;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    margin-bottom: 4px;
+}
+
+.googleFormButton {
+    display: inline-block;
+    padding: 10px 28px;
+    background: var(--accent-color);
+    color: #0f0e0e;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(56, 176, 0, 0.12);
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+    margin-top: 2px;
+    letter-spacing: 0.2px;
+}
+
+.googleFormButton:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px) scale(1.04);
+}
+
+.resumeButton {
+    margin-top: 20px;
+    /* Further reduced top margin for resume button */
+}
 
 
 /* ----------------------------------------------------- */
@@ -541,10 +724,15 @@ html { scroll-behavior: smooth; }
 /* ----------------------------------------------------- */
 @media (max-width: 360px) {
     .contactForm {
-        padding: 15px; /* **NEW**: Further reduced padding for very small screens */
+        padding: 15px;
+        /* **NEW**: Further reduced padding for very small screens */
     }
-    .submitButton, .resumeButton {
-        padding: 7px 18px; /* **NEW**: Even smaller button padding for very small screens */
-        font-size: 0.85rem; /* **NEW**: Slightly smaller button text for very small screens */
+
+    .submitButton,
+    .resumeButton {
+        padding: 7px 18px;
+        /* **NEW**: Even smaller button padding for very small screens */
+        font-size: 0.85rem;
+        /* **NEW**: Slightly smaller button text for very small screens */
     }
 }
